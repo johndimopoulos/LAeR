@@ -15,20 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Learning Analytics Enriched Rubric (e-rubric) - Version
+ * Learning Analytics Enriched Rubric (e-rubric) - Upgrade
  *
- * Contains version information about this plugin.
+ * This file keeps track of upgrades to plugin gradingform_erubric.
  *
  * @package    gradingform_erubric
  * @category   grading
- * @copyright  2012 John Dimopoulos
+ * @copyright  2018 John Dimopoulos <johndimopoulos@sch.gr>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'gradingform_erubric';
-$plugin->version    = 2018062500;
-$plugin->requires   = 2018050800;
-$plugin->release    = '3.0 (Build: 2018062500)';
-$plugin->maturity   = MATURITY_STABLE;
+/**
+ * Keeps track of e-rubric plugin upgrade path
+ *
+ * @param int $oldversion the DB version of currently installed plugin
+ * @return bool true
+ */
+function xmldb_gradingform_erubric_upgrade($oldversion) {
+    global $CFG;
+
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v3.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    return true;
+}
