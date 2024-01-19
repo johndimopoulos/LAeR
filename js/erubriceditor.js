@@ -1,4 +1,4 @@
-M.gradingform_erubriceditor = {
+M.GradingformERubricEditor = {
     'enrichedconst': {},
     'templates': {},
     'eventhandler': null,
@@ -9,11 +9,13 @@ M.gradingform_erubriceditor = {
 
 /**
  * This function is called for each enriched rubriceditor on page.
+ * @param {object} Y - The YUI Instance
+ * @param [Object} options - The configuration options for the YUI instance
  */
-M.gradingform_erubriceditor.init = function(Y, options) {
-    M.gradingform_erubriceditor.name = options.name;
-    M.gradingform_erubriceditor.Y = Y;
-    M.gradingform_erubriceditor.templates[options.name] = {
+M.GradingformERubricEditor.init = function(Y, options) {
+    M.GradingformERubricEditor.name = options.name;
+    M.GradingformERubricEditor.Y = Y;
+    M.GradingformERubricEditor.templates[options.name] = {
         'criterion': options.criteriontemplate,
         'enrichedcriterion': options.enrichedcriteriontemplate,
         'level': options.leveltemplate,
@@ -21,7 +23,7 @@ M.gradingform_erubriceditor.init = function(Y, options) {
     };
 
     // Get predefined variables from erubriceditor.php.
-    M.gradingform_erubriceditor.enrichedconst[options.name] = {
+    M.GradingformERubricEditor.enrichedconst[options.name] = {
         'selectactivity': options.interactiontypecollaboration,
         'selectassignment': options.interactiontypegrade,
         'selectresource': options.interactiontypestudy,
@@ -32,71 +34,71 @@ M.gradingform_erubriceditor.init = function(Y, options) {
         'modulesicons': options.moduleicon
     };
 
-    M.gradingform_erubriceditor.disablealleditors();
-    Y.on('click', M.gradingform_erubriceditor.clickanywhere, 'body', null);
-    var J = YUI().use('event-touch', function(Y) {
-        Y.one('body').on('touchstart', M.gradingform_erubriceditor.clickanywhere);
-        Y.one('body').on('touchend', M.gradingform_erubriceditor.clickanywhere);
+    M.GradingformERubricEditor.disablealleditors();
+    Y.on('click', M.GradingformERubricEditor.clickanywhere, 'body', null);
+    YUI().use('event-touch', function(Y) {
+        Y.one('body').on('touchstart', M.GradingformERubricEditor.clickanywhere);
+        Y.one('body').on('touchend', M.GradingformERubricEditor.clickanywhere);
     });
-    M.gradingform_erubriceditor.addhandlers();
-    M.gradingform_erubriceditor.addenrichmenthandlers();
+    M.GradingformERubricEditor.addhandlers();
+    M.GradingformERubricEditor.addenrichmenthandlers();
 };
 
 // Adds handlers for clicking submit button. This function must be called each time JS adds new elements to html.
-M.gradingform_erubriceditor.addhandlers = function() {
-    var Y = M.gradingform_erubriceditor.Y;
-    var name = M.gradingform_erubriceditor.name;
-    if (M.gradingform_erubriceditor.eventhandler) {
-        M.gradingform_erubriceditor.eventhandler.detach();
+M.GradingformERubricEditor.addhandlers = function() {
+    var Y = M.GradingformERubricEditor.Y;
+    var name = M.GradingformERubricEditor.name;
+    if (M.GradingformERubricEditor.eventhandler) {
+        M.GradingformERubricEditor.eventhandler.detach();
     }
 
-    M.gradingform_erubriceditor.eventhandler = Y.on('click', M.gradingform_erubriceditor.buttonclick, '#erubric-' + name + ' input[type=submit]', null);
-}
+    M.GradingformERubricEditor.eventhandler = Y.on('click', M.GradingformERubricEditor.buttonclick, '#erubric-' + name + ' input[type=submit]', null);
+};
 
 // Adds handlers for all enriched form elements. This function must be called each time JS adds new elements to html.
-M.gradingform_erubriceditor.addenrichmenthandlers = function() {
-    var Y = M.gradingform_erubriceditor.Y;
-    var name = M.gradingform_erubriceditor.name;
-    if (M.gradingform_erubriceditor.richevents.length) {
-        for (var i = 0; i < M.gradingform_erubriceditor.richevents.length; i++) {
-            M.gradingform_erubriceditor.richevents[i].detach();
+M.GradingformERubricEditor.addenrichmenthandlers = function() {
+    var Y = M.GradingformERubricEditor.Y;
+    var name = M.GradingformERubricEditor.name;
+    if (M.GradingformERubricEditor.richevents.length) {
+        for (var i = 0; i < M.GradingformERubricEditor.richevents.length; i++) {
+            M.GradingformERubricEditor.richevents[i].detach();
         }
     }
     // Add multiple handlers for the appropriate elements.
-    M.gradingform_erubriceditor.richevents[0] = Y.on('change', M.gradingform_erubriceditor.selectcoursemodule, '#erubric-' + name + ' .assignment', null);
-    M.gradingform_erubriceditor.richevents[1] = Y.on('change', M.gradingform_erubriceditor.selectcoursemodule, '#erubric-' + name + ' .activity', null);
-    M.gradingform_erubriceditor.richevents[2] = Y.on('change', M.gradingform_erubriceditor.selectcoursemodule, '#erubric-' + name + ' .resource', null);
-    M.gradingform_erubriceditor.richevents[3] = Y.on('change', M.gradingform_erubriceditor.changecriteriontype, '#erubric-' + name + ' .criteriontype', null);
-    M.gradingform_erubriceditor.richevents[4] = Y.on('change', M.gradingform_erubriceditor.changereferencetypeselect, '#erubric-' + name + ' .referencetype', null);
-    M.gradingform_erubriceditor.richevents[5] = Y.on('change', M.gradingform_erubriceditor.changereferencetypeselect, '#erubric-' + name + ' .collaborationtype', null);
-}
+    M.GradingformERubricEditor.richevents[0] = Y.on('change', M.GradingformERubricEditor.selectcoursemodule, '#erubric-' + name + ' .assignment', null);
+    M.GradingformERubricEditor.richevents[1] = Y.on('change', M.GradingformERubricEditor.selectcoursemodule, '#erubric-' + name + ' .activity', null);
+    M.GradingformERubricEditor.richevents[2] = Y.on('change', M.GradingformERubricEditor.selectcoursemodule, '#erubric-' + name + ' .resource', null);
+    M.GradingformERubricEditor.richevents[3] = Y.on('change', M.GradingformERubricEditor.changecriteriontype, '#erubric-' + name + ' .criteriontype', null);
+    M.GradingformERubricEditor.richevents[4] = Y.on('change', M.GradingformERubricEditor.changereferencetypeselect, '#erubric-' + name + ' .referencetype', null);
+    M.GradingformERubricEditor.richevents[5] = Y.on('change', M.GradingformERubricEditor.changereferencetypeselect, '#erubric-' + name + ' .collaborationtype', null);
+};
 
 // Switches all input text and select elements to non-edit mode.
-M.gradingform_erubriceditor.disablealleditors = function() {
-    var Y = M.gradingform_erubriceditor.Y;
-    var name = M.gradingform_erubriceditor.name;
+M.GradingformERubricEditor.disablealleditors = function() {
+    var Y = M.GradingformERubricEditor.Y;
+    var name = M.GradingformERubricEditor.name;
 
     Y.all('#erubric-' + name + ' .level').each(function(node) {
-        M.gradingform_erubriceditor.editmode(node, false);
+        M.GradingformERubricEditor.editmode(node, false);
     });
     Y.all('#erubric-' + name + ' .description').each(function(node) {
-        M.gradingform_erubriceditor.editmode(node, false);
+        M.GradingformERubricEditor.editmode(node, false);
     });
     Y.all('#erubric-' + name + ' .rich .select').each(function(node) {
-        M.gradingform_erubriceditor.editenrichedselect(node, false);
+        M.GradingformERubricEditor.editenrichedselect(node, false);
     });
     Y.all('#erubric-' + name + ' .enrichedlevel').each(function(node) {
-        M.gradingform_erubriceditor.editrichedvalue(node, false);
+        M.GradingformERubricEditor.editrichedvalue(node, false);
     });
     Y.all('#erubric-' + name + ' .rich .collaborationtype').each(function(node) {
-        M.gradingform_erubriceditor.checkcollaborationtype(node);
+        M.GradingformERubricEditor.checkcollaborationtype(node);
     });
-}
+};
 
-// Function invoked on each click on the page. If level and/or criterion fields are clicked
-// it switches this element to edit mode. If rubric button is clicked it does nothing so the 'buttonclick'.
+/* Function invoked on each click on the page. If level and/or criterion fields are clicked
+   it switches this element to edit mode. If rubric button is clicked it does nothing so the 'buttonclick'. */
 // Function is invoked.
-M.gradingform_erubriceditor.clickanywhere = function(e) {
+M.GradingformERubricEditor.clickanywhere = function(e) {
     if (e.type == 'touchstart') {
         return;
     }
@@ -115,12 +117,12 @@ M.gradingform_erubriceditor.clickanywhere = function(e) {
         el = el.get('parentNode');
     }
     if (el) {
-
+        var name = M.GradingformERubricEditor.name;
         // Check if this is an ordinary rubric field.
         if (el.hasClass('level') || el.hasClass('description')) {
             if (el.one('textarea').hasClass('hiddenelement')) {
-                M.gradingform_erubriceditor.disablealleditors();
-                M.gradingform_erubriceditor.editmode(el, true, focustb);
+                M.GradingformERubricEditor.disablealleditors();
+                M.GradingformERubricEditor.editmode(el, true, focustb);
             }
 
             // Check if this is an enriched select.
@@ -128,27 +130,26 @@ M.gradingform_erubriceditor.clickanywhere = function(e) {
             if (el.one('select').hasClass('hiddenelement')) {
                 // Enable select fields only if interaction type is selected.
                 if (el.one('select').hasClass('criteriontype') || el.get('parentNode').one('.criteriontype').get('value').length) {
-                    M.gradingform_erubriceditor.disablealleditors();
+                    M.GradingformERubricEditor.disablealleditors();
                     // If this is a course module select, pick the appropriate select field.
                     if (el.hasClass('coursemodule')) {
-                        var name = M.gradingform_erubriceditor.name;
                         switch (String(el.get('parentNode').one('.criteriontype').get('value'))) { // These values are defined in lib.php.
-                            case String(M.gradingform_erubriceditor.enrichedconst[name]['selectactivity']):
+                            case String(M.GradingformERubricEditor.enrichedconst[name].selectactivity):
                                 el = el.one('.activity');
                                 break;
-                            case String(M.gradingform_erubriceditor.enrichedconst[name]['selectassignment']):
+                            case String(M.GradingformERubricEditor.enrichedconst[name].selectassignment):
                                 el = el.one('.assignment');
                                 break;
-                            case String(M.gradingform_erubriceditor.enrichedconst[name]['selectresource']):
+                            case String(M.GradingformERubricEditor.enrichedconst[name].selectresource):
                                 el = el.one('.resource');
                                 break;
                         }
                     } else {
                         el = el.one('select');
                     }
-                    M.gradingform_erubriceditor.editenrichedselect(el, true);
+                    M.GradingformERubricEditor.editenrichedselect(el, true);
                 } else if (!el.get('parentNode').one('.criteriontype').get('value').length) {
-                    M.gradingform_erubriceditor.disablealleditors();
+                    M.GradingformERubricEditor.disablealleditors();
                 }
             }
 
@@ -157,23 +158,22 @@ M.gradingform_erubriceditor.clickanywhere = function(e) {
             // Check if the enrichment of this criterion is engaged.
             var tmp = el.one('.enrichedvalue');
             var chunks = tmp.get('id').split('-'),
-                Y = M.gradingform_erubriceditor.Y,
-                name = M.gradingform_erubriceditor.name;
+                Y = M.GradingformERubricEditor.Y;
 
             //if enrichment is engaged, enable field
             if (Y.one('#' + name + '-criteria-' + chunks[2] + '-criteriontype').get('value').length) {
-                M.gradingform_erubriceditor.disablealleditors();
-                M.gradingform_erubriceditor.editrichedvalue(el, true);
+                M.GradingformERubricEditor.disablealleditors();
+                M.GradingformERubricEditor.editrichedvalue(el, true);
             }
         }
         return;
     }
     // Else disablecurrenteditor.
-    M.gradingform_erubriceditor.disablealleditors();
-}
+    M.GradingformERubricEditor.disablealleditors();
+};
 
 // Switch the enriched level enriched value to edit mode or switch back.
-M.gradingform_erubriceditor.editrichedvalue = function(el, editmode) {
+M.GradingformERubricEditor.editrichedvalue = function(el, editmode) {
 
     var richval = el.one('.enrichedvalue input[type=text]');
 
@@ -191,13 +191,13 @@ M.gradingform_erubriceditor.editrichedvalue = function(el, editmode) {
     if (!richvalplain) {
         richval.get('parentNode').append('<span class="plainvalue">' + pseudorichvallink + '<span class="textvalue"> </span></span>');
         richvalplain = richval.get('parentNode').one('.plainvalue');
-        richvalplain.one('.pseudotablink').on('focus', M.gradingform_erubriceditor.clickanywhere);
+        richvalplain.one('.pseudotablink').on('focus', M.GradingformERubricEditor.clickanywhere);
     }
 
     if (!editmode) {
         // If we need to hide the input field, copy its contents to plainvalue. If enriched value
         // is empty, display the default text ('Add value') and add/remove 'empty' CSS class to element.
-        var value = richval.get('value')
+        var value = richval.get('value');
         if (value.length) {
             richvalplain.removeClass('empty');
         } else {
@@ -216,10 +216,10 @@ M.gradingform_erubriceditor.editrichedvalue = function(el, editmode) {
         richval.removeClass('hiddenelement');
         richval.focus();
     }
-}
+};
 
 // Switch the criterion enriched select fields to edit mode or switch back.
-M.gradingform_erubriceditor.editenrichedselect = function(el, editmode) {
+M.GradingformERubricEditor.editenrichedselect = function(el, editmode) {
     var sel = el;
     if (!editmode && sel.hasClass('hiddenelement')) {
         return;
@@ -235,7 +235,7 @@ M.gradingform_erubriceditor.editenrichedselect = function(el, editmode) {
     if (!selplain) {
         sel.get('parentNode').append('<div class="plainvaluerich">' + pseudosellink + '<span class="textvalue"> </span></div>');
         selplain = sel.get('parentNode').one('.plainvaluerich');
-        selplain.one('.pseudosellink').on('focus', M.gradingform_erubriceditor.clickanywhere);
+        selplain.one('.pseudosellink').on('focus', M.GradingformERubricEditor.clickanywhere);
     }
 
     // Hide or display ul course modules.
@@ -275,16 +275,15 @@ M.gradingform_erubriceditor.editenrichedselect = function(el, editmode) {
         // Hide/display select fields and plaintexts.
         selplain.removeClass('hiddenelement');
         sel.addClass('hiddenelement');
-    }
-    else {
+    } else {
         // Hide/display textarea, textbox and plaintexts.
         selplain.addClass('hiddenelement');
         sel.removeClass('hiddenelement');
     }
-}
+};
 
 // Switch the criterion description or level to edit mode or switch back.
-M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
+M.GradingformERubricEditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea');
     if (!editmode && ta.hasClass('hiddenelement')) {
         return;
@@ -301,19 +300,19 @@ M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
     if (!taplain) {
         ta.get('parentNode').append('<div class="plainvalue">' + pseudotablink + '<span class="textvalue"> </span></div>');
         taplain = ta.get('parentNode').one('.plainvalue');
-        taplain.one('.pseudotablink').on('focus', M.gradingform_erubriceditor.clickanywhere);
+        taplain.one('.pseudotablink').on('focus', M.GradingformERubricEditor.clickanywhere);
         if (tb) {
             tb.get('parentNode').append('<span class="plainvalue">' + pseudotablink + '<span class="textvalue"> </span></span>');
             tbplain = tb.get('parentNode').one('.plainvalue');
-            tbplain.one('.pseudotablink').on('focus', M.gradingform_erubriceditor.clickanywhere);
+            tbplain.one('.pseudotablink').on('focus', M.GradingformERubricEditor.clickanywhere);
         }
     }
     if (tb && !tbplain) {
         tbplain = tb.get('parentNode').one('.plainvalue');
     }
     if (!editmode) {
-        // if we need to hide the input fields, copy their contents to plainvalue(s). If description/definition
-        // is empty, display the default text ('Click to edit ...') and add/remove 'empty' CSS class to element.
+        /* If we need to hide the input fields, copy their contents to plainvalue(s). If description/definition
+           is empty, display the default text ('Click to edit ...') and add/remove 'empty' CSS class to element. */
         var value = ta.get('value');
         if (value.length) {
             taplain.removeClass('empty');
@@ -344,8 +343,7 @@ M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
             }
             ta.setStyle('width', Math.max(width - 16, 50) + 'px');
             ta.setStyle('height', Math.max(height, 20) + 'px');
-        }
-        catch (err) {
+        } catch (err) {
             // This browser do not support 'computedStyle', leave the default size of the textbox.
         }
         // Hide/display textarea, textbox and plaintexts.
@@ -364,53 +362,54 @@ M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
             ta.focus();
         }
     }
-}
+};
 
-// Handler for clicking on submit buttons within rubriceditor element. Adds/deletes/rearranges criteria and/or levels on client side.
-M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
-    var Y = M.gradingform_erubriceditor.Y,
-        name = M.gradingform_erubriceditor.name;
+// Handler for clicking on submit buttons within rubriceditor element.
+// Adds/deletes/rearranges criteria and/or levels on client side.
+M.GradingformERubricEditor.buttonclick = function(e, confirmed) {
+    var Y = M.GradingformERubricEditor.Y,
+        name = M.GradingformERubricEditor.name;
     if (e.target.get('type') != 'submit') {
         return;
     }
-    M.gradingform_erubriceditor.disablealleditors();
+    M.GradingformERubricEditor.disablealleditors();
     var chunks = e.target.get('id').split('-'),
         action = chunks[chunks.length - 1];
     if (chunks[0] != name || chunks[1] != 'criteria') {
         return;
     }
-    var elements_str, rich_elements_str;
+    var ElementsStr, RichElementsStr, newhelpicon, levidx, lastcriterion, newcriterion, el, ParentElemnt;
 
     if (chunks.length > 4 || action == 'addlevel') {
-        elements_str = '#erubric-' + name + ' #' + name + '-criteria-' + chunks[2] + '-levels .level';
-        rich_elements_str = '#erubric-' + name + ' #' + name + '-enriched-criteria-' + chunks[2] + '-levels .enrichedlevel';
+        ElementsStr = '#erubric-' + name + ' #' + name + '-criteria-' + chunks[2] + '-levels .level';
+        RichElementsStr = '#erubric-' + name + ' #' + name + '-enriched-criteria-' + chunks[2] + '-levels .enrichedlevel';
     } else {
-        elements_str = '#erubric-' + name + ' .criterion';
-        rich_elements_str = '#erubric-' + name + ' .enrichedcriterion';
+        ElementsStr = '#erubric-' + name + ' .criterion';
+        RichElementsStr = '#erubric-' + name + ' .enrichedcriterion';
     }
     // Prepare the id of the next inserted level or criterion.
     var newlevid = 0,
         newid = 0;
     if (action == 'addcriterion' || action == 'addlevel' || action == 'duplicate') {
-        newid = M.gradingform_erubriceditor.calculatenewid('#erubric-' + name + ' .criterion');
-        newlevid = M.gradingform_erubriceditor.calculatenewid('#erubric-' + name + ' .level');
+        newid = M.GradingformERubricEditor.calculatenewid('#erubric-' + name + ' .criterion');
+        newlevid = M.GradingformERubricEditor.calculatenewid('#erubric-' + name + ' .level');
     }
-    var dialog_options = {
+    var DialogOptions = {
         'scope': this,
         'callbackargs': [e, true],
-        'callback': M.gradingform_erubriceditor.buttonclick
+        'callback': M.GradingformERubricEditor.buttonclick
     };
 
     // ADD NEW CRITERION
     if (chunks.length == 3 && action == 'addcriterion') {
-        var levelsscores = [0],
-            levidx = 1,
-            parentel = Y.one('#' + name + '-criteria');
-        if (parentel.one('>tbody')) {
-            parentel = parentel.one('>tbody');
+        var levelsscores = [0];
+            ParentElemnt = Y.one('#' + name + '-criteria');
+            levidx = 1;
+        if (ParentElemnt.one('>tbody')) {
+            ParentElemnt = ParentElemnt.one('>tbody');
         }
-        if (parentel.all('.criterion').size()) {
-            var lastcriterion = parentel.all('.criterion').item(parentel.all('.criterion').size() - 1).all('.level');
+        if (ParentElemnt.all('.criterion').size()) {
+            lastcriterion = ParentElemnt.all('.criterion').item(ParentElemnt.all('.criterion').size() - 1).all('.level');
             for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
                 levelsscores[levidx] = lastcriterion.item(levidx).one('.score input[type=text]').get('value');
             }
@@ -421,29 +420,29 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         var levelsstr = '',
             enrichedlevelsstr = '';
         for (levidx = 0; levidx < levelsscores.length; levidx++) {
-            levelsstr += M.gradingform_erubriceditor.templates[name].level.
+            levelsstr += M.GradingformERubricEditor.templates[name].level.
                             replace(/\{LEVEL-id\}/g, 'NEWID' + (newlevid + levidx)).
                             replace(/\{LEVEL-score\}/g, levelsscores[levidx]).
                             replace(/\{LEVEL-index\}/g, levidx + 1);
-            enrichedlevelsstr += M.gradingform_erubriceditor.templates[name].enrichedlevel.
+            enrichedlevelsstr += M.GradingformERubricEditor.templates[name].enrichedlevel.
                             replace(/\{LEVEL-id\}/g, 'NEWID' + (newlevid + levidx));
         }
-        var newcriterion = M.gradingform_erubriceditor.templates[name]['criterion'].replace(/\{LEVELS\}/, levelsstr);
+        newcriterion = M.GradingformERubricEditor.templates[name].criterion.replace(/\{LEVELS\}/, levelsstr);
         // Add the enriched criterion.
-        newcriterion += M.gradingform_erubriceditor.templates[name]['enrichedcriterion'].replace(/\{LEVELS\}/, enrichedlevelsstr);
-        parentel.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID' + newid).replace(/\{.+?\}/g, ''));
-        M.gradingform_erubriceditor.assignclasses('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-levels .level');
-        M.gradingform_erubriceditor.assignclasses('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + '-levels .enrichedlevel');
-        M.gradingform_erubriceditor.addhandlers();
-        M.gradingform_erubriceditor.addenrichmenthandlers();
-        M.gradingform_erubriceditor.disablealleditors();
-        M.gradingform_erubriceditor.assignclasses(elements_str);
-        M.gradingform_erubriceditor.assignclasses(rich_elements_str);
+        newcriterion += M.GradingformERubricEditor.templates[name].enrichedcriterion.replace(/\{LEVELS\}/, enrichedlevelsstr);
+        ParentElemnt.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID' + newid).replace(/\{.+?\}/g, ''));
+        M.GradingformERubricEditor.assignclasses('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-levels .level');
+        M.GradingformERubricEditor.assignclasses('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + '-levels .enrichedlevel');
+        M.GradingformERubricEditor.addhandlers();
+        M.GradingformERubricEditor.addenrichmenthandlers();
+        M.GradingformERubricEditor.disablealleditors();
+        M.GradingformERubricEditor.assignclasses(ElementsStr);
+        M.GradingformERubricEditor.assignclasses(RichElementsStr);
 
         // Add handler for new help icon for enrichment.
-        var newhelpicon = Y.one('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + ' .helptooltip a') // Get the new help icon.
+        newhelpicon = Y.one('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + ' .helptooltip a'); // Get the new help icon.
         // Get the id of the last help icon.
-        var lastcriterionhelpiconid = parentel.all('.enrichedcriterion').item(parentel.all('.enrichedcriterion').size() - 2).one('.helptooltip a').get('id');
+        var lastcriterionhelpiconid = ParentElemnt.all('.enrichedcriterion').item(ParentElemnt.all('.enrichedcriterion').size() - 2).one('.helptooltip a').get('id');
         // Subtract the last digit from the id, increase it by one, and re-attach the new value to create the new id for the new help icon.
         // All these are done because all help icons must have different ids, in order for javascript to work when user clicks on them.
         var tempid = lastcriterionhelpiconid.substr(-1);
@@ -453,113 +452,113 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         newhelpicon.set('id', newiconid);
 
         // Enable and set focus on the new criterion description field.
-        M.gradingform_erubriceditor.editmode(Y.one('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-description-cell'), true);
+        M.GradingformERubricEditor.editmode(Y.one('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-description-cell'), true);
 
         // ADD NEW LEVEL
     } else if (chunks.length == 5 && action == 'addlevel') {
         var newscore = 0;
-        parent = Y.one('#' + name + '-criteria-' + chunks[2] + '-levels');
-        rich_parent = Y.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels');
+            ParentElemnt = Y.one('#' + name + '-criteria-' + chunks[2] + '-levels');
+        var RichParent = Y.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels');
         var levelIndex = 1;
-        parent.all('.level').each(function(node) {
+        ParentElemnt.all('.level').each(function(node) {
             newscore = Math.max(newscore, parseFloat(node.one('.score input[type=text]').get('value')) + 1);
             levelIndex++;
         });
-        var newlevel = M.gradingform_erubriceditor.templates[name]['level'].
+        var newlevel = M.GradingformERubricEditor.templates[name].level.
                         replace(/\{CRITERION-id\}/g, chunks[2]).
                         replace(/\{LEVEL-id\}/g, 'NEWID' + newlevid).
                         replace(/\{LEVEL-score\}/g, newscore).
                         replace(/\{LEVEL-index\}/g, levelIndex).
                         replace(/\{.+?\}/g, '');
-        var newrichlevel = M.gradingform_erubriceditor.templates[name]['enrichedlevel'].
+        var newrichlevel = M.GradingformERubricEditor.templates[name].enrichedlevel.
                         replace(/\{CRITERION-id\}/g, chunks[2]).
                         replace(/\{LEVEL-id\}/g, 'NEWID' + newlevid).
                         replace(/\{.+?\}/g, '');
 
-        parent.append(newlevel);
-        rich_parent.append(newrichlevel);
-        M.gradingform_erubriceditor.addhandlers();
-        M.gradingform_erubriceditor.disablealleditors();
-        M.gradingform_erubriceditor.assignclasses(elements_str);
-        M.gradingform_erubriceditor.assignclasses(rich_elements_str);
-        var firstlevelsuffix = rich_parent.get('firstChild').one('i').get('innerHTML');
+        ParentElemnt.append(newlevel);
+        RichParent.append(newrichlevel);
+        M.GradingformERubricEditor.addhandlers();
+        M.GradingformERubricEditor.disablealleditors();
+        M.GradingformERubricEditor.assignclasses(ElementsStr);
+        M.GradingformERubricEditor.assignclasses(RichElementsStr);
+        var firstlevelsuffix = RichParent.get('firstChild').one('i').get('innerHTML');
         // Change the suffix of the enriched value, if needed.
         if (firstlevelsuffix) {
-            rich_parent.get('lastChild').one('i').set('innerHTML', firstlevelsuffix);
+            RichParent.get('lastChild').one('i').set('innerHTML', firstlevelsuffix);
         }
         // Enable and set focus on the new level description field.
-        M.gradingform_erubriceditor.editmode(parent.all('.level').item(parent.all('.level').size() - 1), true);
+        M.GradingformERubricEditor.editmode(ParentElemnt.all('.level').item(ParentElemnt.all('.level').size() - 1), true);
 
         // MOVE CRITERION UP
     } else if (chunks.length == 4 && action == 'moveup') {
         el = Y.one('#' + name + '-criteria-' + chunks[2]);
-        rich_el = Y.one('#' + name + '-enriched-criteria-' + chunks[2]);
+        RichElemnt = Y.one('#' + name + '-enriched-criteria-' + chunks[2]);
 
         // Go 2 previous elements over (simple criterion tr and enrichment tr) and make the insert.
-        prev_el = el.previous();
-        if (prev_el.previous()) {
-            el.get('parentNode').insertBefore(el, prev_el.previous());
-            rich_el.get('parentNode').insertBefore(rich_el, prev_el.previous());
+        var PrevElemnt = el.previous();
+        if (PrevElemnt.previous()) {
+            el.get('parentNode').insertBefore(el, PrevElemnt.previous());
+            RichElemnt.get('parentNode').insertBefore(RichElemnt, PrevElemnt.previous());
         }
 
-        M.gradingform_erubriceditor.assignclasses(elements_str);
-        M.gradingform_erubriceditor.assignclasses(rich_elements_str);
+        M.GradingformERubricEditor.assignclasses(ElementsStr);
+        M.GradingformERubricEditor.assignclasses(RichElementsStr);
 
         // MOVE CRITERION DOWN
     } else if (chunks.length == 4 && action == 'movedown') {
         el = Y.one('#' + name + '-criteria-' + chunks[2]);
-        rich_el = Y.one('#' + name + '-enriched-criteria-' + chunks[2]);
+        RichElemnt = Y.one('#' + name + '-enriched-criteria-' + chunks[2]);
 
         // Go 2 next elements under (simple criterion tr and enrichment tr) and make the insert.
-        next_el = el.next();
-        if (next_el.next()) {
-            el.get('parentNode').insertBefore(next_el.next(), el);
-            rich_el.get('parentNode').insertBefore(next_el.next(), el);
+        var NextElemnt = el.next();
+        if (NextElemnt.next()) {
+            el.get('parentNode').insertBefore(NextElemnt.next(), el);
+            RichElemnt.get('parentNode').insertBefore(NextElemnt.next(), el);
         }
-        M.gradingform_erubriceditor.assignclasses(elements_str)
-        M.gradingform_erubriceditor.assignclasses(rich_elements_str)
+        M.GradingformERubricEditor.assignclasses(ElementsStr);
+        M.GradingformERubricEditor.assignclasses(RichElementsStr);
 
         // DELETE CRITERION
     } else if (chunks.length == 4 && action == 'delete') {
 
         if (confirmed) {
             Y.one('#' + name + '-criteria-' + chunks[2]).remove();
-            M.gradingform_erubriceditor.assignclasses(elements_str);
+            M.GradingformERubricEditor.assignclasses(ElementsStr);
             Y.one('#' + name + '-enriched-criteria-' + chunks[2]).remove();
-            M.gradingform_erubriceditor.assignclasses(rich_elements_str);
+            M.GradingformERubricEditor.assignclasses(RichElementsStr);
         } else { // Get and display dialogue message.
-            dialog_options['message'] = M.util.get_string('confirmdeletecriterion', 'gradingform_erubric');
-            M.util.show_confirm_dialog(e, dialog_options);
+            DialogOptions.message = M.util.get_string('confirmdeletecriterion', 'gradingform_erubric');
+            M.util.show_confirm_dialog(e, DialogOptions);
         }
 
         // DUPLICATE CRITERION
     } else if (chunks.length == 4 && action == 'duplicate') {
 
-        var levidx = null,
-            cur_level = [0],
+            levidx = null;
+        var CurLevel = [0],
             regexpr1 = null,
             regexpr2 = null,
             regexpr3 = null;
-        var el = Y.one('#' + name + '-criteria-' + chunks[2]),
-            rich_el = Y.one('#' + name + '-enriched-criteria-' + chunks[2]),
-            el_html = el.getHTML(),
-            rich_el_html = rich_el.getHTML();
+            el = Y.one('#' + name + '-criteria-' + chunks[2]),
+            RichElemnt = Y.one('#' + name + '-enriched-criteria-' + chunks[2]),
+            ElemntHtml = el.getHTML(),
+            RichElemntHtml = RichElemnt.getHTML();
         var patt = new RegExp(/id="yui[0-9_]+">/, "g");
-        var lastcriterion = el.all('.level');
+        lastcriterion = el.all('.level');
 
         // First change levels' ids
         if (lastcriterion) {
             for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
                 // Get the level id
-                cur_level = lastcriterion.item(levidx).get('id').split('-');
-                regexpr1 = new RegExp('-levels-' + cur_level[4] + '-', "g");
-                regexpr2 = new RegExp('-levels-' + cur_level[4] + '"', "g");
-                regexpr3 = new RegExp('\\[levels\\]\\[' + cur_level[4] + '\\]', "g");
+                CurLevel = lastcriterion.item(levidx).get('id').split('-');
+                regexpr1 = new RegExp('-levels-' + CurLevel[4] + '-', "g");
+                regexpr2 = new RegExp('-levels-' + CurLevel[4] + '"', "g");
+                regexpr3 = new RegExp('\\[levels\\]\\[' + CurLevel[4] + '\\]', "g");
 
-                el_html = el_html.replace(regexpr1, '-levels-NEWID' + (newlevid + levidx) + '-')
+                ElemntHtml = ElemntHtml.replace(regexpr1, '-levels-NEWID' + (newlevid + levidx) + '-')
                                  .replace(regexpr2, '-levels-NEWID' + (newlevid + levidx) + '"')
                                  .replace(regexpr3, '[levels][NEWID' + (newlevid + levidx) + ']');
-                rich_el_html = rich_el_html.replace(regexpr1, '-levels-NEWID' + (newlevid + levidx) + '-')
+                RichElemntHtml = RichElemntHtml.replace(regexpr1, '-levels-NEWID' + (newlevid + levidx) + '-')
                                            .replace(regexpr2, '-levels-NEWID' + (newlevid + levidx) + '"')
                                            .replace(regexpr3, '[levels][NEWID' + (newlevid + levidx) + ']');
             }
@@ -569,20 +568,20 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         regexpr1 = new RegExp('-criteria-' + chunks[2] + '-', "g");
         regexpr2 = new RegExp('-criteria-' + chunks[2] + '"', "g");
         regexpr3 = new RegExp('\\[criteria\\]\\[' + chunks[2] + '\\]', "g");
-        el_html = el_html.replace(regexpr1, '-criteria-NEWID' + newid + '-')
+        ElemntHtml = ElemntHtml.replace(regexpr1, '-criteria-NEWID' + newid + '-')
                          .replace(regexpr2, '-criteria-NEWID' + newid + '"')
                          .replace(regexpr3, '[criteria][NEWID' + newid + ']')
                          .replace(patt, '>');
-        rich_el_html = rich_el_html.replace(regexpr1, '-criteria-NEWID' + newid + '-')
+        RichElemntHtml = RichElemntHtml.replace(regexpr1, '-criteria-NEWID' + newid + '-')
                                    .replace(regexpr2, '-criteria-NEWID' + newid + '"')
                                    .replace(regexpr3, '[criteria][NEWID' + newid + ']')
                                    .replace(patt, '>');
 
         // Prepare the new copied criterion
-        var newcriterion = '<tr class="criterion" id="erubric-criteria-NEWID' + newid + '">' + el_html + '</tr>' +
-            '<tr class="enrichedcriterion" id="erubric-enriched-criteria-NEWID' + newid + '">' + rich_el_html + '</tr>';
+        newcriterion = '<tr class="criterion" id="erubric-criteria-NEWID' + newid + '">' + ElemntHtml + '</tr>' +
+            '<tr class="enrichedcriterion" id="erubric-enriched-criteria-NEWID' + newid + '">' + RichElemntHtml + '</tr>';
 
-        rich_el.insert(newcriterion, 'after');
+        RichElemnt.insert(newcriterion, 'after');
 
         // Check if the parent element is previously created and assign the user given values, inside the new form fields
         if (chunks[2].indexOf('NEWID') == 0) {
@@ -590,38 +589,38 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
             if (!el.one('.description .plainvalue').hasClass('empty') && !el.one('.description').one('textarea').get('innerHTML')) {
                 Y.one('#' + name + '-criteria-NEWID' + newid).one('.description').one('textarea').set('innerHTML', el.one('.description .plainvalue .textvalue').get('innerHTML'));
             }
-            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.criteriontype').get('selectedIndex') && rich_el.one('.criteriontype').get('selectedIndex')) {
-                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.criteriontype').get('options').item(rich_el.one('.criteriontype').get('selectedIndex')).setAttribute('selected', 'selected');
+            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.criteriontype').get('selectedIndex') && RichElemnt.one('.criteriontype').get('selectedIndex')) {
+                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.criteriontype').get('options').item(RichElemnt.one('.criteriontype').get('selectedIndex')).setAttribute('selected', 'selected');
             }
-            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.collaborationtype').get('selectedIndex') && rich_el.one('.collaborationtype').get('selectedIndex')) {
-                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.collaborationtype').get('options').item(rich_el.one('.collaborationtype').get('selectedIndex')).setAttribute('selected', 'selected');
+            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.collaborationtype').get('selectedIndex') && RichElemnt.one('.collaborationtype').get('selectedIndex')) {
+                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.collaborationtype').get('options').item(RichElemnt.one('.collaborationtype').get('selectedIndex')).setAttribute('selected', 'selected');
             }
-            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.operator').get('selectedIndex') && rich_el.one('.operator').get('selectedIndex')) {
-                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.operator').get('options').item(rich_el.one('.operator').get('selectedIndex')).setAttribute('selected', 'selected');
+            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.operator').get('selectedIndex') && RichElemnt.one('.operator').get('selectedIndex')) {
+                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.operator').get('options').item(RichElemnt.one('.operator').get('selectedIndex')).setAttribute('selected', 'selected');
             }
-            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.referencetype').get('selectedIndex') && rich_el.one('.referencetype').get('selectedIndex')) {
-                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.referencetype').get('options').item(rich_el.one('.referencetype').get('selectedIndex')).setAttribute('selected', 'selected');
+            if (!Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.referencetype').get('selectedIndex') && RichElemnt.one('.referencetype').get('selectedIndex')) {
+                Y.one('#' + name + '-enriched-criteria-NEWID' + newid).one('.referencetype').get('options').item(RichElemnt.one('.referencetype').get('selectedIndex')).setAttribute('selected', 'selected');
             }
 
             // Levels
             for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
                 // Get the parent level id
-                cur_level = lastcriterion.item(levidx).get('id').split('-');
+                CurLevel = lastcriterion.item(levidx).get('id').split('-');
                 // Assign level definition
-                if (!el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .definition .plainvalue').hasClass('empty') &&
-                    !el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .definition').one('textarea').get('innerHTML')) {
+                if (!el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .definition .plainvalue').hasClass('empty') &&
+                    !el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .definition').one('textarea').get('innerHTML')) {
                     Y.one('#' + name + '-criteria-NEWID' + newid + '-levels-NEWID' + (newlevid + levidx) + ' .definition').one('textarea').set('innerHTML',
-                        el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .definition').one('.plainvalue .textvalue').get('innerHTML'));
+                        el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .definition').one('.plainvalue .textvalue').get('innerHTML'));
                 }
                 // Assign level score
-                if (el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .score .plainvalue .textvalue').get('innerHTML')) {
+                if (el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .score .plainvalue .textvalue').get('innerHTML')) {
                     Y.one('#' + name + '-criteria-NEWID' + newid + '-levels-NEWID' + (newlevid + levidx) + ' .score input[type=text]').set('value',
-                        el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .score .plainvalue .textvalue').get('innerHTML'));
+                        el.one('#' + name + '-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .score .plainvalue .textvalue').get('innerHTML'));
                 }
                 // Assign level enriched check value
-                if (!rich_el.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .richvalue .plainvalue').hasClass('empty')) {
+                if (!RichElemnt.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .richvalue .plainvalue').hasClass('empty')) {
                     Y.one('#' + name + '-enriched-criteria-NEWID' + newid + '-levels-NEWID' + (newlevid + levidx) + ' .richvalue input[type=text]').set('value',
-                        rich_el.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels-' + cur_level[4] + ' .richvalue .plainvalue .textvalue').get('innerHTML'));
+                        RichElemnt.one('#' + name + '-enriched-criteria-' + chunks[2] + '-levels-' + CurLevel[4] + ' .richvalue .plainvalue .textvalue').get('innerHTML'));
                 }
             }
         }
@@ -633,33 +632,33 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         Y.one('#' + name + '-criteria-NEWID' + newid).all('.hiddenelement').removeClass('hiddenelement');
         Y.one('#' + name + '-enriched-criteria-NEWID' + newid).all('.hiddenelement').removeClass('hiddenelement');
 
-        M.gradingform_erubriceditor.assignclasses('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-levels .level');
-        M.gradingform_erubriceditor.assignclasses('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + '-levels .enrichedlevel');
-        M.gradingform_erubriceditor.addhandlers();
-        M.gradingform_erubriceditor.addenrichmenthandlers();
-        M.gradingform_erubriceditor.disablealleditors();
-        M.gradingform_erubriceditor.assignclasses(elements_str);
-        M.gradingform_erubriceditor.assignclasses(rich_elements_str);
+        M.GradingformERubricEditor.assignclasses('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-levels .level');
+        M.GradingformERubricEditor.assignclasses('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + '-levels .enrichedlevel');
+        M.GradingformERubricEditor.addhandlers();
+        M.GradingformERubricEditor.addenrichmenthandlers();
+        M.GradingformERubricEditor.disablealleditors();
+        M.GradingformERubricEditor.assignclasses(ElementsStr);
+        M.GradingformERubricEditor.assignclasses(RichElementsStr);
 
         // Add handler for new help icon for enrichment.
         // Get the new help icon.
-        var newhelpicon = Y.one('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + ' .helptooltip a');
+        newhelpicon = Y.one('#erubric-' + name + ' #' + name + '-enriched-criteria-NEWID' + newid + ' .helptooltip a');
         // Set the new ID to the new help icon.
         newhelpicon.set('id', newid);
 
-        M.gradingform_erubriceditor.editmode(Y.one('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-description-cell'), true);
+        M.GradingformERubricEditor.editmode(Y.one('#erubric-' + name + ' #' + name + '-criteria-NEWID' + newid + '-description-cell'), true);
 
         // DELETE LEVEL
     } else if (chunks.length == 6 && action == 'delete') {
 
         if (confirmed) {
             Y.one('#' + name + '-criteria-' + chunks[2] + '-' + chunks[3] + '-' + chunks[4]).remove();
-            M.gradingform_erubriceditor.assignclasses(elements_str);
+            M.GradingformERubricEditor.assignclasses(ElementsStr);
             Y.one('#' + name + '-enriched-criteria-' + chunks[2] + '-' + chunks[3] + '-' + chunks[4]).remove();
-            M.gradingform_erubriceditor.assignclasses(rich_elements_str);
+            M.GradingformERubricEditor.assignclasses(RichElementsStr);
         } else { // Get and display dialog message.
-            dialog_options['message'] = M.util.get_string('confirmdeletelevel', 'gradingform_erubric');
-            M.util.show_confirm_dialog(e, dialog_options);
+            DialogOptions.message = M.util.get_string('confirmdeletelevel', 'gradingform_erubric');
+            M.util.show_confirm_dialog(e, DialogOptions);
         }
 
         // DELETE COURSE MODULE ACTIVITY/RESOURCE/ASSIGNMENT
@@ -676,29 +675,29 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         } else { // Get and display dialogue message.
             switch (chunks[3]) {
                 case 'activity':
-                    dialog_options['message'] = M.util.get_string('confirmdeleteactivity', 'gradingform_erubric');
+                    DialogOptions.message = M.util.get_string('confirmdeleteactivity', 'gradingform_erubric');
                     break;
                 case 'resource':
-                    dialog_options['message'] = M.util.get_string('confirmdeleteresource', 'gradingform_erubric');
+                    DialogOptions.message = M.util.get_string('confirmdeleteresource', 'gradingform_erubric');
                     break;
                 case 'assignment':
-                    dialog_options['message'] = M.util.get_string('confirmdeleteassignment', 'gradingform_erubric');
+                    DialogOptions.message = M.util.get_string('confirmdeleteassignment', 'gradingform_erubric');
                     break;
                 default:
-                    dialog_options['message'] = '  '
+                    DialogOptions.message = '  ';
             }
-            M.util.show_confirm_dialog(e, dialog_options);
+            M.util.show_confirm_dialog(e, DialogOptions);
         }
     } else { // Unknown action.
         return;
     }
     // Don't submit the form.
     e.preventDefault();
-}
+};
 
-// Properly set classes (first/last/odd/even), level width and/or criterion sortorder for elements Y.all(elements_str).
-M.gradingform_erubriceditor.assignclasses = function(elements_str) {
-    var elements = M.gradingform_erubriceditor.Y.all(elements_str);
+// Properly set classes (first/last/odd/even), level width and/or criterion sortorder for elements Y.all(ElementsStr).
+M.GradingformERubricEditor.assignclasses = function(ElementsStr) {
+    var elements = M.GradingformERubricEditor.Y.all(ElementsStr);
     for (var i = 0; i < elements.size(); i++) {
         elements.item(i).removeClass('first').removeClass('last').removeClass('even').removeClass('odd').
         addClass(((i % 2) ? 'odd' : 'even') + ((i == 0) ? ' first' : '') + ((i == elements.size() - 1) ? ' last' : ''));
@@ -715,12 +714,12 @@ M.gradingform_erubriceditor.assignclasses = function(elements_str) {
             elements.item(i).set('width', Math.round(100 / elements.size()) + '%');
         }
     }
-}
+};
 
-// Returns unique id for the next added element, it should not be equal to any of Y.all(elements_str) ids.
-M.gradingform_erubriceditor.calculatenewid = function(elements_str) {
+// Returns unique id for the next added element, it should not be equal to any of Y.all(ElementsStr) ids.
+M.GradingformERubricEditor.calculatenewid = function(ElementsStr) {
     var newid = 1;
-    M.gradingform_erubriceditor.Y.all(elements_str).each(function(node) {
+    M.GradingformERubricEditor.Y.all(ElementsStr).each(function(node) {
         var idchunks = node.get('id').split('-'),
             id = idchunks.pop();
         if (id.match(/^NEWID(\d+)$/)) {
@@ -728,12 +727,12 @@ M.gradingform_erubriceditor.calculatenewid = function(elements_str) {
         }
     });
     return newid;
-}
+};
 
 // Selection of course modules handler to add new course modules for the enriched criterion.
 // Multiple Select Fields code inspired from Michal Wojciechowski (life saver)
 // and was copied from http://odyniec.net/articles/multiple-select-fields/ .
-M.gradingform_erubriceditor.selectcoursemodule = function(e) {
+M.GradingformERubricEditor.selectcoursemodule = function(e) {
     var selfield = e.target,
         ul = selfield.get('parentNode').one('ul'),
         fvalue = selfield.get('value');
@@ -744,15 +743,13 @@ M.gradingform_erubriceditor.selectcoursemodule = function(e) {
 
         var deletetitle,
             chunks = selfield.get('id').split('-'),
-            name = M.gradingform_erubriceditor.name,
-            fname = selfield.get('name'),
+            name = M.GradingformERubricEditor.name,
             fid = selfield.get('id'),
             findex = selfield.get('selectedIndex'),
             fdesc = selfield.get("options").item(findex).get('text'),
             ficon = '',
             lititle = '',
-            delbtn = '',
-            Y = M.gradingform_erubriceditor.Y;
+            delbtn = '';
 
         if (selfield.hasClass('activity')) {
 
@@ -771,7 +768,7 @@ M.gradingform_erubriceditor.selectcoursemodule = function(e) {
         if (selfield.hasClass('assignment')) {
             deletetitle = M.util.get_string('deleteassignment', 'gradingform_erubric'); // Set tittle for delete button.
         }
-        if (ul.hasClass('hiddenelement')) {// If the ul is hidden (if empty), reveal it to display the value to be added.
+        if (ul.hasClass('hiddenelement')) { // If the ul is hidden (if empty), reveal it to display the value to be added.
             ul.removeClass('hiddenelement');
         }
         // Cut of long strings and add title.
@@ -781,7 +778,7 @@ M.gradingform_erubriceditor.selectcoursemodule = function(e) {
         var valueChunks = fvalue.split('->');
 
         // The module type icon to be displayed.
-        ficon = M.gradingform_erubriceditor.enrichedconst[name]['modulesicons'][valueChunks[0]] + ' ';
+        ficon = M.GradingformERubricEditor.enrichedconst[name].modulesicons[valueChunks[0]] + ' ';
 
         // The delete button to be displayed.
         delbtn = '<div class="delete">' +
@@ -794,40 +791,39 @@ M.gradingform_erubriceditor.selectcoursemodule = function(e) {
             '<input type="hidden" name="' + name + '[criteria][' + chunks[2] + '][coursemodules][' + chunks[3] + '][]" value="' + fvalue + '" /> ' + ficon + fdesc + delbtn + '</li>');
 
         // Add event listener for delete button.
-        M.gradingform_erubriceditor.addhandlers();
+        M.GradingformERubricEditor.addhandlers();
     }
     // Reset the select field.
     selfield.set('selectedIndex', '0');
-}
+};
 
 // Handle enrichment fields that depend on the selected course module (collaboration - grade - study).
-M.gradingform_erubriceditor.changecriteriontype = function(e, confirmed, crvalue) {
+M.GradingformERubricEditor.changecriteriontype = function(e, confirmed, crvalue) {
     var selfield = e.target,
         ul = selfield.get('parentNode').get('parentNode').one('ul'),
         collaborationfield = selfield.get('parentNode').get('parentNode').one('.collaborationtype'),
         referencefield = selfield.get('parentNode').get('parentNode').one('.referencetype');
 
-    var dialog_options = { // Prepare the dialog options.
+    var DialogOptions = { // Prepare the dialog options.
         'scope': this,
-        'callbackargs': [e, true, selfield.get('selectedIndex')], //remember the current selected value
-        'callback': M.gradingform_erubriceditor.changecriteriontype
+        'callbackargs': [e, true, selfield.get('selectedIndex')], // Remember the current selected value.
+        'callback': M.GradingformERubricEditor.changecriteriontype
     };
 
     // Alert and take action according to current chosen course modules.
     if (ul.hasChildNodes()) {
 
-        var Y = M.gradingform_erubriceditor.Y,
-            name = M.gradingform_erubriceditor.name;
+        var name = M.GradingformERubricEditor.name;
 
         var currentSelection = ul.one('li');
         if (currentSelection.get('id').indexOf('resource') > 0) {
-            selfield.set('selectedIndex', M.gradingform_erubriceditor.enrichedconst[name]['selectresource']);
+            selfield.set('selectedIndex', M.GradingformERubricEditor.enrichedconst[name].selectresource);
         }
         if (currentSelection.get('id').indexOf('activity') > 0) {
-            selfield.set('selectedIndex', M.gradingform_erubriceditor.enrichedconst[name]['selectactivity']);
+            selfield.set('selectedIndex', M.GradingformERubricEditor.enrichedconst[name].selectactivity);
         }
         if (currentSelection.get('id').indexOf('assignment') > 0) {
-            selfield.set('selectedIndex', M.gradingform_erubriceditor.enrichedconst[name]['selectassignment']);
+            selfield.set('selectedIndex', M.GradingformERubricEditor.enrichedconst[name].selectassignment);
         }
 
         if (confirmed) { // If we had confirmation.
@@ -836,32 +832,32 @@ M.gradingform_erubriceditor.changecriteriontype = function(e, confirmed, crvalue
             selfield.set('selectedIndex', crvalue);
             // Change enriched values suffix on levels if needed.
             if (referencefield.get('value').length) {
-                M.gradingform_erubriceditor.changereferencetypeselect(referencefield);
+                M.GradingformERubricEditor.changereferencetypeselect(referencefield);
             }
         } else { // Display confirmation dialogue box.
-            dialog_options['message'] = M.util.get_string('confirmchangecriteriontype', 'gradingform_erubric');
-            M.util.show_confirm_dialog(e, dialog_options);
+            DialogOptions.message = M.util.get_string('confirmchangecriteriontype', 'gradingform_erubric'); // Add the message.
+            M.util.show_confirm_dialog(e, DialogOptions);
         }
     } else if (referencefield.get('value').length) { // Change enriched values suffix on levels if needed.
-        M.gradingform_erubriceditor.changereferencetypeselect(referencefield);
+        M.GradingformERubricEditor.changereferencetypeselect(referencefield);
     }
 
     // Show or hide the collaboration type select field according to criterion type selection.
-    M.gradingform_erubriceditor.checkcollaborationtype(collaborationfield);
-}
+    M.GradingformERubricEditor.checkcollaborationtype(collaborationfield);
+};
 
 // Handle enriched value suffix according to reference type field selection, criterion type and collaboration type.
-M.gradingform_erubriceditor.changereferencetypeselect = function(e) {
+M.GradingformERubricEditor.changereferencetypeselect = function(e) {
     var selfield = e.target;
     if (!selfield) {
-        selfield = e // In case changecriteriontype function above, triggered this function.
+        selfield = e; // In case changecriteriontype function above, triggered this function.
     }
     var chunks = selfield.get('id').split('-');
-    var Y = M.gradingform_erubriceditor.Y,
-        name = M.gradingform_erubriceditor.name,
+    var Y = M.GradingformERubricEditor.Y,
+        name = M.GradingformERubricEditor.name,
         typefield = Y.one('#' + name + '-criteria-' + chunks[2] + '-criteriontype');
 
-    //In case this function was triggered by a change in the collaboration type field
+    // In case this function was triggered by a change in the collaboration type field.
     if (chunks[3] == 'collaborationtype') {
         selfield = Y.one('#' + name + '-criteria-' + chunks[2] + '-referencetype');
     }
@@ -876,58 +872,59 @@ M.gradingform_erubriceditor.changereferencetypeselect = function(e) {
     var enrichedvaluesuffixfields = Y.all('#' + name + '-enriched-criteria-' + chunks[2] + '-levels i');
 
     switch (value) {
-        case String(M.gradingform_erubriceditor.enrichedconst[name]['referenceabsolutenumber']):
-            if (criteriontypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['selectactivity'])) {
+        case String(M.GradingformERubricEditor.enrichedconst[name].referenceabsolutenumber):
+            if (criteriontypevalue == String(M.GradingformERubricEditor.enrichedconst[name].selectactivity)) {
                 var collaborationtypevalue = String(selfield.get('parentNode').get('parentNode').one('.collaborationtype').get('value'));
-                if (collaborationtypevalue.length && collaborationtypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['collaborationpeople'])) {
+                if (collaborationtypevalue.length && collaborationtypevalue == String(M.GradingformERubricEditor.enrichedconst[name].collaborationpeople)) {
                     enrichedvaluesuffixfields.each(function(node) {
-                        M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixstudents', 'gradingform_erubric'));
+                        M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixstudents', 'gradingform_erubric'));
                     });
-                }
-                else if (collaborationtypevalue.length && collaborationtypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['collaborationfiles'])) {
+                } else if (collaborationtypevalue.length && collaborationtypevalue == String(M.GradingformERubricEditor.enrichedconst[name].collaborationfiles)) {
                     enrichedvaluesuffixfields.each(function(node) {
-                        M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixfiles', 'gradingform_erubric'));
+                        M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixfiles', 'gradingform_erubric'));
                     });
                 } else {
                     enrichedvaluesuffixfields.each(function(node) {
-                        M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixtimes', 'gradingform_erubric'));
+                        M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixtimes', 'gradingform_erubric'));
                     });
                 }
-            } else if (criteriontypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['selectresource'])) {
+            } else if (criteriontypevalue == String(M.GradingformERubricEditor.enrichedconst[name].selectresource)) {
                 enrichedvaluesuffixfields.each(function(node) {
-                    M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixtimes', 'gradingform_erubric'));
+                    M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixtimes', 'gradingform_erubric'));
                 });
-            } else if (criteriontypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['selectassignment'])) {
+            } else if (criteriontypevalue == String(M.GradingformERubricEditor.enrichedconst[name].selectassignment)) {
                 enrichedvaluesuffixfields.each(function(node) {
-                    M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixpoints', 'gradingform_erubric'));
+                    M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixpoints', 'gradingform_erubric'));
                 });
             } else {
                 enrichedvaluesuffixfields.each(function(node) {
-                    M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixnothing', 'gradingform_erubric'));
+                    M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixnothing', 'gradingform_erubric'));
                 });
             }
             break;
-        case String(M.gradingform_erubriceditor.enrichedconst[name]['referencepercentage']):
+        case String(M.GradingformERubricEditor.enrichedconst[name].referencepercentage):
             enrichedvaluesuffixfields.each(function(node) {
-                M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixpercent', 'gradingform_erubric'));
+                M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixpercent', 'gradingform_erubric'));
             });
             break;
         default:
             enrichedvaluesuffixfields.each(function(node) {
-                M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixnothing', 'gradingform_erubric'));
+                M.GradingformERubricEditor.changeenrichedvaluesuffix(node, M.util.get_string('enrichedvaluesuffixnothing', 'gradingform_erubric'));
             });
     }
-}
+};
 
 // Function to display or hide the collaboration type select field, according to criterion type selected.
-M.gradingform_erubriceditor.checkcollaborationtype = function(e) {
+M.GradingformERubricEditor.checkcollaborationtype = function(e) {
     var selfield = e;
         selfield = selfield.get('parentNode');
-    var name = M.gradingform_erubriceditor.name;
+    var name = M.GradingformERubricEditor.name;
     var criteriontypevalue = String(selfield.get('parentNode').one('.criteriontype').get('value'));
 
-    if (criteriontypevalue.length && criteriontypevalue == String(M.gradingform_erubriceditor.enrichedconst[name]['selectactivity'])) {
-        if (selfield.hasClass('hiddenelement')) selfield.removeClass('hiddenelement');
+    if (criteriontypevalue.length && criteriontypevalue == String(M.GradingformERubricEditor.enrichedconst[name].selectactivity)) {
+        if (selfield.hasClass('hiddenelement')) {
+            selfield.removeClass('hiddenelement');
+        }
     } else {
         // Reset the field value if exists.
         if (e.get('selectedIndex')) {
@@ -940,10 +937,10 @@ M.gradingform_erubriceditor.checkcollaborationtype = function(e) {
             selfield.addClass('hiddenelement');
         }
     }
-}
+};
 
 // Change the suffix in the criterion levels enriched values.
-M.gradingform_erubriceditor.changeenrichedvaluesuffix = function(el, str) {
+M.GradingformERubricEditor.changeenrichedvaluesuffix = function(el, str) {
     el.empty();
     el.set('innerHTML', str);
-}
+};

@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'gradingform_erubric';
-$plugin->version    = 2018062500;
-$plugin->requires   = 2018050800;
-$plugin->release    = '3.0 (Build: 2018062500)';
+$plugin->version    = 2023030500;
+$plugin->requires   = 2020110900;
+$plugin->release    = '4.0 (Build: 2023030500)';
 $plugin->maturity   = MATURITY_STABLE;

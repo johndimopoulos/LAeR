@@ -1,17 +1,19 @@
-M.gradingform_erubric = {};
-M.path_mod_assign = {};
+M.GradingformERubric = {};
 
 /**
- * This function is called for each e-rubric on page.
+ * This function is called for the e-rubric on grading page.
+ * This function initializes the e-rubric and defines corresponding event handlers for all rubric levels.
+ * @param {object} Y - The YUI Instance
+ * @param [Object} options - The configuration options for the YUI instance
  */
-M.gradingform_erubric.init = function(Y, options) {
-    Y.on('click', M.gradingform_erubric.levelclick, '#erubric-' + options.name + ' .level', null, Y, options.name);
+M.GradingformERubric.init = function(Y, options) {
+    Y.on('click', M.GradingformERubric.levelclick, '#erubric-' + options.name + ' .level', null, Y, options.name);
     // Capture also space and enter keypress.
-    Y.on('key', M.gradingform_erubric.levelclick, '#erubric-' + options.name + ' .level', 'space', Y, options.name);
-    Y.on('key', M.gradingform_erubric.levelclick, '#erubric-' + options.name + ' .level', 'enter', Y, options.name);
+    Y.on('key', M.GradingformERubric.levelclick, '#erubric-' + options.name + ' .level', 'space', Y, options.name);
+    Y.on('key', M.GradingformERubric.levelclick, '#erubric-' + options.name + ' .level', 'enter', Y, options.name);
 
     Y.all('#erubric-' + options.name + ' .radio').setStyle('display', 'none');
-    Y.all('#erubric-' + options.name + ' .level').each( function (node) {
+    Y.all('#erubric-' + options.name + ' .level').each(function(node) {
     // Only for not enriched levels.
     if (!node.hasClass('currentenenriched') && node.one('input[type=radio]').get('checked')) {
         node.addClass('checked');
@@ -19,7 +21,7 @@ M.gradingform_erubric.init = function(Y, options) {
     });
 
     // Change rubric container width according to the number of maximum levels, for better fit.
-    var maxlevels = Y.one('.gradingform_erubric').getAttribute('data-maxlevels');
+    var maxlevels = Y.one('.GradingformERubric').getAttribute('data-maxlevels');
 
     if (maxlevels >= 6) {
         Y.one('div[data-region=grade]').setStyle('maxWidth', '100%');
@@ -30,13 +32,13 @@ M.gradingform_erubric.init = function(Y, options) {
     }
 
     // Change the left margin, for evaluation using Boost Theme
-    if (Y.one('.gradingform_erubric').hasClass('boost_theme')) {
+    if (Y.one('.GradingformERubric').hasClass('boost_theme')) {
         Y.one('div[data-fieldtype=grading]').setStyle('padding-left', 'unset');
         Y.one('div[data-fieldtype=grading]').setStyle('padding-right', 'unset');
     }
 };
 
-M.gradingform_erubric.levelclick = function(e, Y) {
+M.GradingformERubric.levelclick = function(e) {
     var el = e.target;
     while (el && !el.hasClass('level')) {
         el = el.get('parentNode');
@@ -62,4 +64,4 @@ M.gradingform_erubric.levelclick = function(e, Y) {
         el.setAttribute('aria-checked', 'false');
         el.get('parentNode').all('input[type=radio]').set('checked', false);
     }
-}
+};

@@ -607,8 +607,7 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
     }
 
     /**
-     * Prepares the data for saving
-     * @see prepare_data()
+     * Prepares the data for saving @see prepare_data()
      * @param array $submitValues
      * @param boolean $assoc
      * @return array
