@@ -26,10 +26,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="criterionid"/>
         <FIELD NAME="criterionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The enriched rubric criterion this enriched level is a part of" PREVIOUS="id" NEXT="score"/>
-        <FIELD NAME="score" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The score for this enriched level" PREVIOUS="criterionid" NEXT="definition"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="8" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DECIMALS="2" COMMENT="The score for this enriched level" PREVIOUS="criterionid" NEXT="definition"/>
         <FIELD NAME="definition" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The optional text description of the enriched level" PREVIOUS="score" NEXT="definitionformat"/>
         <FIELD NAME="definitionformat" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the definition field" PREVIOUS="definition" NEXT="enrichedvalue"/>
-        <FIELD NAME="enrichedvalue" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="5" COMMENT="The enriched value for this enriched level" PREVIOUS="definitionformat"/>
+        <FIELD NAME="enrichedvalue" TYPE="number" LENGTH="8" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="2" COMMENT="The enriched value for this enriched level" PREVIOUS="definitionformat"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_criterionid"/>
@@ -45,8 +45,8 @@
         <FIELD NAME="remark" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="Side note feedback regarding this particular criterion" PREVIOUS="levelid" NEXT="remarkformat"/>
         <FIELD NAME="remarkformat" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The format of the remark field" PREVIOUS="remark" NEXT="enrichedbenchmark"/>
         <FIELD NAME="enrichedbenchmark" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The benchmark estimated from the enrichment evaluation of levels according to criteria" PREVIOUS="remarkformat" NEXT="enrichedbenchmarkstudent"/>
-        <FIELD NAME="enrichedbenchmarkstudent" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The student benchmark estimated from the enrichment evaluation of levels according to criteria" PREVIOUS="enrichedbenchmark" NEXT="enrichedbenchmarkstudents"/>
-        <FIELD NAME="enrichedbenchmarkstudents" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="The students average estimated from the enrichment evaluation of levels according to criteria" PREVIOUS="enrichedbenchmarkstudent"/>
+        <FIELD NAME="enrichedbenchmarkstudent" TYPE="number" LENGTH="8" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="2" COMMENT="The student benchmark estimated from the enrichment evaluation of levels according to criteria" PREVIOUS="enrichedbenchmark" NEXT="enrichedbenchmarkstudents"/>
+        <FIELD NAME="enrichedbenchmarkstudents" TYPE="number" LENGTH="8" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DECIMALS="2" COMMENT="The students average estimated from the enrichment evaluation of levels according to criteria" PREVIOUS="enrichedbenchmarkstudent"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_instanceid"/>

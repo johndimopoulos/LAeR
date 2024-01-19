@@ -20,6 +20,7 @@ M.gradingform_erubriceditor.init = function(Y, options) {
         'referenceabsolutenumber' : options.referencestudent,
         'referencepercentage' : options.referencestudents,
         'collaborationpeople' : options.collaborationpeople,
+        'collaborationfiles' : options.collaborationfiles,
         'modulesicons' : options.moduleicon
     }
     M.gradingform_erubriceditor.disablealleditors()
@@ -56,6 +57,7 @@ M.gradingform_erubriceditor.addenrichmenthandlers = function() {
     M.gradingform_erubriceditor.richevents[2] = Y.on('change', M.gradingform_erubriceditor.selectcoursemodule, '#erubric-'+name+' .resource', null);
     M.gradingform_erubriceditor.richevents[3] = Y.on('change', M.gradingform_erubriceditor.changecriteriontype, '#erubric-'+name+' .criteriontype', null);
     M.gradingform_erubriceditor.richevents[4] = Y.on('change', M.gradingform_erubriceditor.changereferencetypeselect, '#erubric-'+name+' .referencetype', null);
+    M.gradingform_erubriceditor.richevents[5] = Y.on('change', M.gradingform_erubriceditor.changereferencetypeselect, '#erubric-'+name+' .collaborationtype', null);
 }
 
 // Switches all input text and select elements to non-edit mode.
@@ -269,8 +271,8 @@ M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
             value = (el.hasClass('level')) ? M.str.gradingform_erubric.levelempty : M.str.gradingform_erubric.criterionempty
             taplain.addClass('empty')
         }
-        taplain.one('.textvalue').set('innerHTML', value)
-        if (tb) tbplain.one('.textvalue').set('innerHTML', tb.get('value'))
+        taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value));
+        if (tb) tbplain.one('.textvalue').set('innerHTML', Y.Escape.html(tb.get('value')));
         // Hide/display textarea, textbox and plaintexts.
         taplain.removeClass('hiddenelement')
         ta.addClass('hiddenelement')
@@ -285,7 +287,7 @@ M.gradingform_erubriceditor.editmode = function(el, editmode, focustb) {
                 height
             if (el.hasClass('level')) height = parseFloat(el.getComputedStyle('height')) - parseFloat(el.one('.score').getComputedStyle('height'))
             else height = parseFloat(ta.get('parentNode').getComputedStyle('height'))
-            ta.setStyle('width', Math.max(width,50)+'px')
+            ta.setStyle('width', Math.max(width-16,50)+'px')
             ta.setStyle('height', Math.max(height,20)+'px')
         }
         catch (err) {
@@ -362,9 +364,9 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         M.gradingform_erubriceditor.assignclasses(rich_elements_str)
 
         // Add handler for new help icon for enrichment.
-        var newhelpicon = Y.one('#erubric-'+name+' #'+name+'-enriched-criteria-NEWID'+newid+' .helplink a') // Get the new help icon.
+        var newhelpicon = Y.one('#erubric-'+name+' #'+name+'-enriched-criteria-NEWID'+newid+' .helptooltip a') // Get the new help icon.
         // Get the id of the last help icon.
-        var lastcriterionhelpiconid = parentel.all('.enrichedcriterion').item(parentel.all('.enrichedcriterion').size()-2).one('.helplink a').get('id')
+        var lastcriterionhelpiconid = parentel.all('.enrichedcriterion').item(parentel.all('.enrichedcriterion').size()-2).one('.helptooltip a').get('id')
         // Subtract the last digit from the id, increase it by one, and re-attach the new value to create the new id for the new help icon.
         // All these are done because all help icons must have different ids, in order for javascript to work when user clicks on them.
         var tempid = lastcriterionhelpiconid.substr(-1)
@@ -372,11 +374,7 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         var newiconid = lastcriterionhelpiconid.substr(0, lastcriterionhelpiconid.length-1)+tempid
         // Set the new ID to the new help icon.
         newhelpicon.set('id', newiconid)
-        var newhelpiconattributes = {
-                'id' : newhelpicon.get('id'),
-                'url' : newhelpicon.get('href')
-            }
-        M.util.help_icon.add(Y, newhelpiconattributes)
+
         // Enable and set focus on the new criterion description field.
         M.gradingform_erubriceditor.editmode(Y.one('#erubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-description'),true)
 
@@ -399,6 +397,11 @@ M.gradingform_erubriceditor.buttonclick = function(e, confirmed) {
         M.gradingform_erubriceditor.disablealleditors()
         M.gradingform_erubriceditor.assignclasses(elements_str)
         M.gradingform_erubriceditor.assignclasses(rich_elements_str)
+        var firstlevelsuffix = rich_parent.get('firstChild').one('i').get('innerHTML')
+        // Change the suffix of the enriched value, if needed.
+        if (firstlevelsuffix) {
+            rich_parent.get('lastChild').one('i').set('innerHTML', firstlevelsuffix)
+        }
         // Enable and set focus on the new level description field.
         M.gradingform_erubriceditor.editmode(parent.all('.level').item(parent.all('.level').size()-1), true)
 
@@ -618,6 +621,8 @@ M.gradingform_erubriceditor.changecriteriontype = function (e, confirmed, crvalu
             dialog_options['message'] = M.str.gradingform_erubric.confirmchangecriteriontype
             M.util.show_confirm_dialog(e, dialog_options);
         }
+    } else if (referencefield.get('value').length) { // Change enriched values suffix on levels if needed.
+        M.gradingform_erubriceditor.changereferencetypeselect(referencefield)
     }
 
     // Show or hide the collaboration type select field according to criterion type selection.
@@ -627,12 +632,21 @@ M.gradingform_erubriceditor.changecriteriontype = function (e, confirmed, crvalu
 // Handle enriched value suffix according to reference type field selection, criterion type and collaboration type.
 M.gradingform_erubriceditor.changereferencetypeselect = function (e) {
     var selfield = e.target
-    if (!selfield) selfield = e // In case changecriteriontype function triggered this function.
-    var value = String(selfield.get('value'))
+    if (!selfield) selfield = e // In case changecriteriontype function above, triggered this function.
     var chunks = selfield.get('id').split('-')
     var Y = M.gradingform_erubriceditor.Y,
         name = M.gradingform_erubriceditor.name,
-        typefield = Y.all('#'+name+'-criteria-'+chunks[2]+'-criteriontype')
+        typefield = Y.one('#'+name+'-criteria-'+chunks[2]+'-criteriontype')
+
+    //In case this function was triggered by a change in the collaboration type field
+    if (chunks[3]=='collaborationtype') {
+        selfield = Y.one('#'+name+'-criteria-'+chunks[2]+'-referencetype')
+    }
+    var value = String(selfield.get('value'))
+
+    // If user just started completing the enrichment and this was triggered by a change in the collaboration type field, do nothing.
+    if (chunks[3]=='collaborationtype' && !value) return;
+
     var criteriontypevalue = String(typefield.get('value'))
     var enrichedvaluesuffixfields = Y.all('#'+name+'-enriched-criteria-'+chunks[2]+'-levels i')
 
@@ -642,6 +656,8 @@ M.gradingform_erubriceditor.changereferencetypeselect = function (e) {
                 var collaborationtypevalue = String(selfield.get('parentNode').get('parentNode').one('.collaborationtype').get('value'))
                 if (collaborationtypevalue.length && collaborationtypevalue==String(M.gradingform_erubriceditor.enrichedconst[name]['collaborationpeople'])) {
                     enrichedvaluesuffixfields.each( function(node) {M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.str.gradingform_erubric.enrichedvaluesuffixstudents)} )
+                }else if (collaborationtypevalue.length && collaborationtypevalue==String(M.gradingform_erubriceditor.enrichedconst[name]['collaborationfiles'])) {
+                    enrichedvaluesuffixfields.each( function(node) {M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.str.gradingform_erubric.enrichedvaluesuffixfiles)} )
                 }else{
                     enrichedvaluesuffixfields.each( function(node) {M.gradingform_erubriceditor.changeenrichedvaluesuffix(node, M.str.gradingform_erubric.enrichedvaluesuffixtimes)} )
                 }

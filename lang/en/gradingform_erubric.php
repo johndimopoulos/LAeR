@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Language file for plugin gradingform_erubric
+ *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -63,7 +65,7 @@ $string['criterionoperatorequals'] = 'equal (=)';
 $string['criterionoperatormorethan'] = 'more than (>=)';
 $string['referencetypenumber'] = 'student';
 $string['referencetypepercentage'] = 'students';
-$string['collaborationtypeentries'] = 'simple occurrences';
+$string['collaborationtypeentries'] = 'posts & talks';
 $string['collaborationtypefileadds'] = 'file submissions';
 $string['collaborationtypereplies'] = 'forum replies';
 $string['collaborationtypeinteractions'] = 'people interacted';
@@ -80,6 +82,7 @@ $string['confirmchangecriteriontype'] = 'Are you sure you want to change the cri
 // LA e-rubric level enrichment value suffixes and score postfix.
 $string['enrichedvaluesuffixpoints'] = '%points';
 $string['enrichedvaluesuffixtimes'] = 'times';
+$string['enrichedvaluesuffixfiles'] = 'files';
 $string['enrichedvaluesuffixpercent'] = 'percent';
 $string['enrichedvaluesuffixstudents'] = 'people';
 $string['enrichedvaluesuffixnothing'] = '<font color="red"><b>!!!</b></font>';
@@ -110,7 +113,8 @@ $string['enrichedrubricinfoexplained'] = 'All enriched criteria will be calculat
                                             only if override is enabled the evaluator can make his own choice.<br />';
 $string['enrichshareconfirm'] = '<font color="red"><b>WARNING!</b></font><br /><br />
 <b>Learning Analytics Enriched Rubric</b> plugin can be used as an advanced grading form template, ONLY FOR THE PRESENT COURSE!
-If other users at your site use this form in any other course, <b>it will not work as is</b>!';
+If other users at your site use this form in any other course, <b>it will not work as is</b>! The rubric\'s main structure will remain intact,
+but you will have to replace all embedded course modules with similar modules from the destination course.';
 
 // LA e-rubric enrichment help icon.
 $string['enrichment'] = 'Enrichment';
@@ -119,31 +123,35 @@ $string['enrichment_help'] = 'Watch the following tutorial on how to Create Crit
     <a target="_blank" href="http://www.youtube.com/watch?v=8w6yreB1geI&hd=1">Create Criteria in Learning Analytics Enriched Rubric</a><br /><br />';
 
 // LA e-rubric description of form errors and alerts.
-$string['err_criteriontypeid'] = 'You must choose one or all Resource(s) or Activity(ies)';
-$string['err_criteriontypeid'] = 'You must choose an operator for the enriched criterion';
-$string['err_criterionmethod'] = 'You must choose the numerical reference for the enriched criterion';
+$string['err_missinglogstores'] = '<p><font color="red"><b>Logging System Error!</b></font></p>
+    This tool can only function if the <b>Standard</b> and/or <b>Legacy</b> logs are enabled. Non of them appear to be.
+    Please contact your site Administrator in order to activate either one of the previous log stores, if you want to use this tool.
+    For more information check the <a target="_blank" href="https://docs.moodle.org/29/en/Learning_Analytics_Enriched_Rubric">plugin\'s documentation</a>.';
+$string['err_criteriontypeid'] = 'You must choose one or all Resource(s) or Activity(ies).';
+$string['err_criteriontypeid'] = 'You must choose an operator for the enriched criterion.';
+$string['err_criterionmethod'] = 'You must choose the numerical reference for the enriched criterion.';
 $string['collaborationochoice'] = 'You must choose collaboration type before adding modules!';
-$string['err_enrichedvalueformat'] = 'Number of check values for each enriched level must be a valid non-negative number';
-$string['err_enrichedvaluemissing'] = 'Enriched criteria, must have check values on all levels';
-$string['err_enrichedcriterionmissing'] = 'All enriched criteria must be selected, or none';
-$string['err_enrichedmoduleselection'] = 'Selected course modules must be of the same enriched criterion type';
-$string['err_collaborationhoice'] = 'Chat modules can not be chosen to check file submissions or forum replies';
-$string['err_collaborationtypeneedless'] = 'Type field should be selected only for collaboration check';
+$string['err_enrichedvalueformat'] = 'Number of check values for each enriched level must be a valid non-negative integer number.';
+$string['err_enrichedvaluemissing'] = 'Enriched criteria, must have check values on all levels.';
+$string['err_enrichedcriterionmissing'] = 'All enriched criteria must be selected, or none.';
+$string['err_enrichedmoduleselection'] = 'Selected course modules must be of the same enriched criterion type.';
+$string['err_collaborationhoice'] = 'Chat modules can not be chosen to check file submissions or forum replies.';
+$string['err_collaborationtypeneedless'] = 'Type field should be selected only for collaboration check.';
 $string['err_missingcoursemodule'] = 'Missing module!';
-$string['err_missingcoursemodules'] = '<font color="red"><b>WARNING!</b></font><br />
+$string['err_missingcoursemodules'] = '<p><font color="red"><b>WARNING!</b></font></p>
     At least one course module is missing from the criteria!
     Maybe the course module was deleted or this gradding form was imported from another course (or backup)(or shared form).
-    Edit the current form in order to re-enrich (or not) these criteria. Otherwise <b>student evaluation won\'t be possible</b>!';
-$string['err_missingcoursemodulesedit'] = '<font color="red"><b>WARNING!</b></font><br />
+    Edit the current form in order to re-enrich (or not) these criteria. Otherwise <b>student evaluation may not be possible</b>!';
+$string['err_missingcoursemodulesedit'] = '<p><font color="red"><b>WARNING!</b></font></p>
     At least one course module is missing from the criteria!
     You may delete these criteria or make them \'simple\' by resetting enrichment fields or enrich them again.
-    <b>If you don\'t update this form and leave it as is, student evaluation won\'t be possible!</b>';
-$string['err_mintwolevels'] = 'Each criterion must have at least two levels';
-$string['err_nocriteria'] = 'Rubric must contain at least one criterion';
-$string['err_nodefinition'] = 'Level definition can not be empty';
-$string['err_nodescription'] = 'Criterion description can not be empty';
-$string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
-$string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';
+    <b>If you don\'t update this form and leave it as is, student evaluation may not be possible!</b>';
+$string['err_mintwolevels'] = 'Each criterion must have at least two levels.';
+$string['err_nocriteria'] = 'Rubric must contain at least one criterion.';
+$string['err_nodefinition'] = 'Level definition can not be empty.';
+$string['err_nodescription'] = 'Criterion description can not be empty.';
+$string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative integer number.';
+$string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero.';
 $string['needregrademessage'] = 'The enriched rubric definition was changed after this student had been graded.
     The student can not see this enriched rubric until you check the enriched rubric and update the grade.';
 $string['regrademessage1'] = 'You are about to save changes to an enriched rubric that has already been used for grading.
@@ -155,12 +163,14 @@ $string['regradeoption0'] = 'Do not mark for regrade';
 $string['regradeoption1'] = 'Mark for regrade';
 $string['restoredfromdraft'] = 'NOTE: The last attempt to grade this person was not saved properly so draft grades have been restored.
     If you want to cancel these changes use the \'Cancel\' button below.';
-$string['rubricnotcompleted'] = 'An appropriate level for each criterion should be chosen';
+$string['rubricnotcompleted'] = 'An appropriate level for each criterion should be chosen.';
 
 // LA e-rubric evaluation results.
-$string['benchmarkinfo'] = 'Enrichement<br />benchmark:<br /><b>{$a}</b>';
-$string['benchmarkinfonull'] = 'Enrichement<br />benchmark:<br /><b>Not found!</b>';
-$string['benchmarkinfoall'] = 'Students<br />average:<br /><b>{$a->students}</b><br />Student:<br /><b>{$a->student}</b>';
+$string['benchmarkinfo'] = 'Results from Learning Analytics';
+$string['benchmarkfinal'] = 'Student final benchmark result';
+$string['studentbenchmarkinfo'] = 'Student benchmark';
+$string['studentsbenchmarkinfo'] = 'Students benchmark';
+$string['benchmarkinfonull'] = 'No results from Learning Analytics';
 
 // LA e-rubric simple rubric options.
 $string['rubricoptions'] = 'Rubric options';
@@ -172,7 +182,7 @@ $string['showdescriptionstudent'] = 'Display rubric description to those being g
 $string['showdescriptionteacher'] = 'Display rubric description during evaluation';
 $string['showscorestudent'] = 'Display points for each level to those being graded';
 $string['showscoreteacher'] = 'Display points for each level during evaluation';
-$string['enableremarks'] = 'Allow grader to add text remarks for each criteria';
+$string['enableremarks'] = 'Allow grader to add text remarks for each criterion';
 $string['showremarksstudent'] = 'Show remarks to those being graded';
 
 // LA e-rubric enrichment options.
@@ -183,7 +193,7 @@ $string['showenrichedcriteriastudent'] = 'Display enrichment of criteria to thos
 $string['showenrichedcriteriateacher'] = 'Display enrichment of criteria during evaluation';
 $string['timestampenrichmentend'] = 'Enrichment calculations are conducted until submission due date (if enabled)';
 $string['timestampenrichmentstart'] = 'Enrichment calculations are conducted from assignment available date (if enabled)';
-$string['overideenrichmentevaluation'] = 'Override automatic criterion evaluation in case of enrichment logical error<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+$string['overideenrichmentevaluation'] = 'Override automatic criterion evaluation in case of enrichment logical error<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                           (<i>If enrichment logical error exists, evaluation is not possible without overriding it!)</i>';
 $string['showenrichedbenchmarkteacher'] = 'Display calculated enrichment benchmark during evaluation';
 $string['showenrichedbenchmarkstudent'] = 'Display calculated enrichment benchmark to those being graded';

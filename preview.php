@@ -19,7 +19,7 @@
  *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,8 +50,6 @@ $PAGE->set_heading($title);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
-if (!empty($options['showdescriptionstudent'])) {
-    echo $OUTPUT->box($controller->get_formatted_description(), 'gradingform_erubric-description');
-}
+
 echo $controller->render_preview($PAGE);
 echo $OUTPUT->footer();

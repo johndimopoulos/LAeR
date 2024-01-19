@@ -18,14 +18,14 @@
 /**
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'gradingform_erubric';
-$plugin->version    = 2012121600;
-$plugin->requires   = 2011120500;
-$plugin->release    = '1.0 (Build: 2012121600)';
-$plugin->maturity   = MATURITY_BETA;
+$plugin->version    = 2015062500;
+$plugin->requires   = 2013111800;
+$plugin->release    = '2.0 (Build: 2015062500)';
+$plugin->maturity   = MATURITY_STABLE;

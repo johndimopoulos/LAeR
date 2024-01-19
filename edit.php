@@ -19,7 +19,7 @@
  *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,7 +43,12 @@ $PAGE->set_url(new moodle_url('/grade/grading/form/erubric/edit.php', array('are
 $PAGE->set_title(get_string('defineenrichedrubric', 'gradingform_erubric'));
 $PAGE->set_heading(get_string('defineenrichedrubric', 'gradingform_erubric'));
 
-$mform = new gradingform_erubric_editrubric(null, array('areaid' => $areaid, 'context' => $context, 'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_erubric_editform'));
+// Small adjustment to add special class for css, to better support the Greek language.
+$classsuffix = '';
+$lang = current_language();
+if ($lang == 'el') $classsuffix = ' hellenic';
+
+$mform = new gradingform_erubric_editrubric(null, array('areaid' => $areaid, 'context' => $context, 'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_erubric_editform'.$classsuffix));
 $data = $controller->get_definition_for_editing(true);
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data->returnurl = $returnurl;

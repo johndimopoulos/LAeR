@@ -16,11 +16,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The form is used at the enriched rubric editor page which is defined here.
+ * The form used at the rubric editor page is defined here
  *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -49,6 +49,7 @@ class gradingform_erubric_editrubric extends moodleform {
         $form->setType('areaid', PARAM_INT);
 
         $form->addElement('hidden', 'returnurl');
+        $form->setType('returnurl', PARAM_LOCALURL);
 
         // Name
         $form->addElement('text', 'name', get_string('name', 'gradingform_erubric'), array('size'=>52));

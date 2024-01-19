@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * File contains definition of class MoodleQuickForm_erubriceditor
+ *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -25,18 +27,41 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("HTML/QuickForm/input.php");
 
+/**
+ * Form element for handling rubric editor
+ *
+ * The rubric editor is defined as a separate form element. This allows us to render
+ * criteria, levels and buttons using the rubric's own renderer. Also, the required
+ * Javascript library is included, which processes, on the client, buttons needed
+ * for reordering, adding and deleting criteria.
+ *
+ * If Javascript is disabled when one of those special buttons is pressed, the form
+ * element is not validated and, instead of submitting the form, we process button presses.
+ *
+ * @package    gradingform
+ * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
+ * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
-    /** Help message */
+    /** @var string Help message */
     public $_helpbutton = '';
-    /** Stores the result of the last validation: null - undefined, false - no errors, string - error(s) text. */
+    /** @var string|bool Stores the result of the last validation: null - undefined, false - no errors, string - error(s) text. */
     protected $validationerrors = null;
-    /** If the element has already been validated. **/
+    /** @var bool If the element has already been validated. **/
     protected $wasvalidated = false;
-    /** If non-submit (JS) button was pressed: null - unknown, true/false - button was/wasn't pressed. */
+    /** @var bool If non-submit (JS) button was pressed: null - unknown, true/false - button was/wasn't pressed. */
     protected $nonjsbuttonpressed = false;
-    /** Message to display in front of the editor (that student evaluation has occured on this enriched rubric being edited). */
+    /** @var bool Message to display in front of the editor (that student evaluation has occured on this enriched rubric being edited). */
     protected $regradeconfirmation = false;
 
+    /**
+     * Constructor for rubric editor
+     *
+     * @param string $elementName
+     * @param string $elementLabel
+     * @param array $attributes
+     */
     function MoodleQuickForm_erubriceditor($elementName=null, $elementLabel=null, $attributes=null) {
         parent::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
     }
@@ -95,20 +120,22 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
         if (!$this->_flagFrozen) {
             $mode = gradingform_erubric_controller::DISPLAY_EDIT_FULL;
             // Module constants to be used in the javascript include file.
-            $module = array('name'=>'gradingform_erubriceditor', 'fullpath'=>'/grade/grading/form/erubric/js/erubriceditor.js',
-                'strings' => array(array('confirmdeletecriterion', 'gradingform_erubric'), array('confirmdeletelevel', 'gradingform_erubric'),
-                    array('criterionempty', 'gradingform_erubric'), array('levelempty', 'gradingform_erubric'),
-                    array('intercactionempty', 'gradingform_erubric'), array('collaborationempty', 'gradingform_erubric'),
-                    array('collaborationochoice', 'gradingform_erubric'), array('coursemoduleempty', 'gradingform_erubric'),
-                    array('operatorempty', 'gradingform_erubric'), array('referencetypeempty', 'gradingform_erubric'),
-                    array('enrichedvalueempty', 'gradingform_erubric'), array('confirmdeleteactivity', 'gradingform_erubric'),
-                    array('confirmdeleteresource', 'gradingform_erubric'), array('confirmdeleteassignment', 'gradingform_erubric'),
-                    array('deleteactivity', 'gradingform_erubric'), array('deleteresource', 'gradingform_erubric'),
-                    array('deleteassignment', 'gradingform_erubric'), array('confirmchangecriteriontype', 'gradingform_erubric'),
-                    array('enrichedvaluesuffixtimes', 'gradingform_erubric'), array('enrichedvaluesuffixpercent', 'gradingform_erubric'),
-                    array('enrichedvaluesuffixpoints', 'gradingform_erubric'), array('enrichedvaluesuffixnothing', 'gradingform_erubric'),
-                    array('enrichedvaluesuffixstudents', 'gradingform_erubric')
-                    ));
+            $module = array('name'=>'gradingform_erubriceditor',
+                            'fullpath'=>'/grade/grading/form/erubric/js/erubriceditor.js',
+                            'requires' => array('base', 'dom', 'event', 'event-touch', 'escape'),
+                            'strings' => array(array('confirmdeletecriterion', 'gradingform_erubric'), array('confirmdeletelevel', 'gradingform_erubric'),
+                                               array('criterionempty', 'gradingform_erubric'), array('levelempty', 'gradingform_erubric'),
+                                               array('intercactionempty', 'gradingform_erubric'), array('collaborationempty', 'gradingform_erubric'),
+                                               array('collaborationochoice', 'gradingform_erubric'), array('coursemoduleempty', 'gradingform_erubric'),
+                                               array('operatorempty', 'gradingform_erubric'), array('referencetypeempty', 'gradingform_erubric'),
+                                               array('enrichedvalueempty', 'gradingform_erubric'), array('confirmdeleteactivity', 'gradingform_erubric'),
+                                               array('confirmdeleteresource', 'gradingform_erubric'), array('confirmdeleteassignment', 'gradingform_erubric'),
+                                               array('deleteactivity', 'gradingform_erubric'), array('deleteresource', 'gradingform_erubric'),
+                                               array('deleteassignment', 'gradingform_erubric'), array('confirmchangecriteriontype', 'gradingform_erubric'),
+                                               array('enrichedvaluesuffixtimes', 'gradingform_erubric'), array('enrichedvaluesuffixpercent', 'gradingform_erubric'),
+                                               array('enrichedvaluesuffixpoints', 'gradingform_erubric'), array('enrichedvaluesuffixnothing', 'gradingform_erubric'),
+                                               array('enrichedvaluesuffixstudents', 'gradingform_erubric'), array('enrichedvaluesuffixfiles', 'gradingform_erubric'))
+                            );
             // Define and engade the js class from the js file.
             $PAGE->requires->js_init_call('M.gradingform_erubriceditor.init', array(
                 array('name' => $this->getName(),
@@ -122,6 +149,7 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
                     'referencestudent' => gradingform_erubric_controller::REFERENCE_STUDENT,
                     'referencestudents' => gradingform_erubric_controller::REFERENCE_STUDENTS,
                     'collaborationpeople' => gradingform_erubric_controller::COLLABORATION_TYPE_INTERACTIONS,
+                    'collaborationfiles' => gradingform_erubric_controller::COLLABORATION_TYPE_FILE_ADDS,
                     'moduleicon' => $renderer->moduleicon
                    )),
                 true, $module);
@@ -140,7 +168,7 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
             $html .= $renderer->display_regrade_confirmation($this->getName(), $this->regradeconfirmation, $data['regrade']);
         }
         if ($this->validationerrors) { // Display validation errors.
-            $html .= $renderer->notification($this->validationerrors, 'error');
+            $html .= $renderer->notification($this->validationerrors, 'errormessage');
         }
 
         $html .= $renderer->display_erubric($data['criteria'], $data['options'], $mode, $this->getName());
@@ -433,7 +461,7 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
                         );
 
                         foreach ($criterion['levels'] as $lastlevel) {
-                            if ($level['score'] < $lastlevel['score'] + 1) {
+                            if (isset($lastlevel['score']) && $level['score'] < $lastlevel['score'] + 1) {
                                 $level['score'] = $lastlevel['score'] + 1;
                             }
                         }
@@ -446,7 +474,7 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
                                 $errors['err_nodefinition'] = 1;
                                 $level['error_definition'] = true;
                             }
-                            if (!preg_match('#^[\+]?\d*$#', trim($level['score'])) && !preg_match('#^[\+]?\d*[\.,]\d+$#', trim($level['score']))) {
+                            if ((!strlen(trim($level['score']))) || (!preg_match('#^[\+]?\d*$#', trim($level['score'])))) { // Only positive integers.
                                 $errors['err_scoreformat'] = 1;
                                 $level['error_score'] = true;
                             }
@@ -458,8 +486,8 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
                                     $errors['err_enrichedvaluemissing'] = 1;
                                     $level['error_enrichedvaluemissing'] = true;
 
-                                // If enriched value is anything but a possitive number, establish the error.
-                                }else if (!preg_match('#^[\+]?\d*$#', trim($level['enrichedvalue'])) && !preg_match('#^[\+]?\d*[\.,]\d+$#', trim($level['enrichedvalue']))) {
+                                // If enriched value is anything but a possitive integer number, establish the error.
+                                }else if (!preg_match('#^[\+]?\d*$#', trim($level['enrichedvalue']))) { // Remove check for decimals. We only want integers -- && !preg_match('#^[\+]?\d*[\.,]\d+$#', trim($level['enrichedvalue'])) --
                                     $errors['err_enrichedvalueformat'] = 1;
                                     $level['error_enrichedvalueformat'] = true;
                                 }
@@ -530,12 +558,14 @@ class MoodleQuickForm_erubriceditor extends HTML_QuickForm_input {
 
         // Create validation error string (if needed).
         if ($withvalidation) {
-            if (count($errors)) {
+            if (!empty($errors)) {
                 $rv = array();
+                $prefix = '';
+                if (count($errors)>1) $prefix = '&bull;&nbsp;';
                 foreach ($errors as $error => $v) {
-                    $rv[] = get_string($error, 'gradingform_erubric');
+                    $rv[] = $prefix.get_string($error, 'gradingform_erubric');
                 }
-                $this->validationerrors = join('<br/ >', $rv);
+                $this->validationerrors = join('<br />', $rv);
             } else {
                 $this->validationerrors = false;
             }

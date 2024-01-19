@@ -19,7 +19,7 @@
  *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
- * @copyright  2012 John Dimopoulos <johndimopoulos@sch.gr>
+ * @copyright  2012 John Dimopoulos
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -112,7 +112,7 @@ class gradingform_erubric_controller extends gradingform_controller {
      * @param int|null $usermodified optional userid of the author of the definition, defaults to the current user
      */
     public function update_definition(stdClass $newdefinition, $usermodified = null) {
-        $this->update_or_check_erubric($newdefinition, $usermodified, true); //dimopoulos gone here
+        $this->update_or_check_erubric($newdefinition, $usermodified, true);
         if (isset($newdefinition->erubric['regrade']) && $newdefinition->erubric['regrade']) {
             $this->mark_for_regrade();
         }
@@ -640,10 +640,22 @@ class gradingform_erubric_controller extends gradingform_controller {
             throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
         }
 
-        $output = $this->get_renderer($page);
         $criteria = $this->definition->erubric_criteria;
         $options = $this->get_options();
         $erubric = '';
+        if (has_capability('moodle/grade:managegradingforms', $page->context)) {
+            $showdescription = true;
+        } else {
+            if (empty($options['alwaysshowdefinition']))  {
+                // ensure we don't display unless show rubric option enabled
+                return '';
+            }
+            $showdescription = $options['showdescriptionstudent'];
+        }
+        $output = $this->get_renderer($page);
+        if ($showdescription) {
+            $erubric .= $output->box($this->get_formatted_description(), 'gradingform_erubric-description');
+        }
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $erubric .= $output->display_erubric_mapping_explained($this->get_min_max_score());
             $erubric .= $output->display_erubric($criteria, $options, self::DISPLAY_PREVIEW, 'erubric');
@@ -780,11 +792,76 @@ class gradingform_erubric_controller extends gradingform_controller {
         }
         return $returnvalue;
     }
+
+    /**
+     * Returns an array that defines the structure of the rubric's criteria. This function is used by the web service functions
+     * core_grading_external::get_definitions(), core_grading_external::definition() and core_grading_external::create_definition_object().
+
+     * @return array An array containing a single key/value pair with the 'erubric_criteria' external_multiple_structure.
+     * @see gradingform_controller::get_external_definition_details()
+     * @since Moodle 2.5
+     */
+    public static function get_external_definition_details() {
+        $erubric_criteria = new external_multiple_structure(
+            new external_single_structure(
+                array(
+                   'id'   => new external_value(PARAM_INT, 'criterion id', VALUE_OPTIONAL),
+                   'sortorder' => new external_value(PARAM_INT, 'sortorder', VALUE_OPTIONAL),
+                   'description' => new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL),
+                   'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
+                   'criteriontype' => new external_value(PARAM_INT, 'criteriontype', VALUE_OPTIONAL),
+                   'collaborationtype' => new external_value(PARAM_INT, 'collaborationtype', VALUE_OPTIONAL),
+                   'coursemodules' => new external_value(PARAM_RAW, 'coursemodules', VALUE_OPTIONAL),
+                   'operator' => new external_value(PARAM_INT, 'operator', VALUE_OPTIONAL),
+                   'referencetype' => new external_value(PARAM_INT, 'referencetype', VALUE_OPTIONAL),
+                   'levels' => new external_multiple_structure(
+                                   new external_single_structure(
+                                       array(
+                                        'id' => new external_value(PARAM_INT, 'level id', VALUE_OPTIONAL),
+                                        'score' => new external_value(PARAM_FLOAT, 'score', VALUE_OPTIONAL),
+                                        'definition' => new external_value(PARAM_RAW, 'definition', VALUE_OPTIONAL),
+                                        'definitionformat' => new external_format_value('definition', VALUE_OPTIONAL),
+                                        'enrichedvalue' => new external_value(PARAM_FLOAT, 'enrichedvalue', VALUE_OPTIONAL)
+                                       )
+                                  ), 'levels', VALUE_OPTIONAL
+                              )
+                   )
+              ), 'definition details', VALUE_OPTIONAL
+        );
+        return array('rubric_criteria' => $erubric_criteria);
+    }
+
+    /**
+     * Returns an array that defines the structure of the rubric's filling. This function is used by
+     * the web service function core_grading_external::get_gradingform_instances().
+     *
+     * @return An array containing a single key/value pair with the 'criteria' external_multiple_structure
+     * @see gradingform_controller::get_external_instance_filling_details()
+     * @since Moodle 2.6
+     */
+    public static function get_external_instance_filling_details() {
+        $ecriteria = new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'filling id'),
+                    'criterionid' => new external_value(PARAM_INT, 'criterion id'),
+                    'levelid' => new external_value(PARAM_INT, 'level id', VALUE_OPTIONAL),
+                    'remark' => new external_value(PARAM_RAW, 'remark', VALUE_OPTIONAL),
+                    'remarkformat' => new external_format_value('remark', VALUE_OPTIONAL),
+                    'enrichedbenchmark' => new external_value(PARAM_FLOAT, 'enrichedbenchmark', VALUE_OPTIONAL),
+                    'enrichedbenchmarkstudent' => new external_value(PARAM_FLOAT, 'enrichedbenchmarkstudent', VALUE_OPTIONAL),
+                    'enrichedbenchmarkstudents' => new external_value(PARAM_FLOAT, 'enrichedbenchmarkstudents', VALUE_OPTIONAL)
+                )
+            ), 'filling', VALUE_OPTIONAL
+        );
+        return array ('criteria' => $ecriteria);
+    }
 }
 
 /**
- * Class to manage one enriched rubric grading instance. Stores information and performs actions like
- * update, copy, validate, submit, etc.
+ * Class to manage one enriched rubric grading instance.
+ *
+ * Stores information and performs actions like update, copy, validate, submit, etc.
  *
  * @package    gradingform
  * @subpackage Learinng Analytics Enriched Rubric (e-rubric)
@@ -918,10 +995,10 @@ class gradingform_erubric_instance extends gradingform_instance {
     /**
      * Calculates the grade to be pushed to the gradebook.
      *
-     * @return int the valid grade from $this->get_controller()->get_grade_range()
+     * @return float|int the valid grade from $this->get_controller()->get_grade_range()
      */
     public function get_grade() {
-        global $DB, $USER;
+
         $grade = $this->get_erubric_filling();
 
         if (!($scores = $this->get_controller()->get_min_max_score()) || $scores['maxscore'] <= $scores['minscore']) {
@@ -940,14 +1017,19 @@ class gradingform_erubric_instance extends gradingform_instance {
         foreach ($grade['criteria'] as $id => $record) {
             $curscore += $this->get_controller()->get_definition()->erubric_criteria[$id]['levels'][$record['levelid']]['score'];
         }
-        return round(($curscore-$scores['minscore'])/($scores['maxscore']-$scores['minscore'])*($maxgrade-$mingrade), 0) + $mingrade;
+
+        $gradeoffset = ($curscore-$scores['minscore'])/($scores['maxscore']-$scores['minscore'])*($maxgrade-$mingrade);
+        if ($this->get_controller()->get_allow_grade_decimals()) {
+            return $gradeoffset + $mingrade;
+        }
+        return round($gradeoffset, 0) + $mingrade;
     }
 
     /**
      * Returns html for form element of type 'grading'.
      *
      * @param moodle_page $page
-     * @param MoodleQuickForm_grading $formelement
+     * @param MoodleQuickForm_grading $gradingformelement
      * @return string
      */
     public function render_grading_element($page, $gradingformelement) {
@@ -970,11 +1052,11 @@ class gradingform_erubric_instance extends gradingform_instance {
         if ($value === null) {
             $value = $this->get_erubric_filling();
         } else if (!$this->validate_grading_element($value)) {
-            $html .= html_writer::tag('div', get_string('rubricnotcompleted', 'gradingform_erubric'), array('class' => 'gradingform_rubric-error'));
+            $html .= html_writer::tag('div', get_string('rubricnotcompleted', 'gradingform_erubric'), array('class' => 'gradingform_erubric-error'));
         }
         $currentinstance = $this->get_current_instance();
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
-            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_erubric'), array('class' => 'gradingform_rubric-regrade'));
+            $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_erubric'), array('class' => 'gradingform_erubric-regrade'));
         }
         $haschanges = false;
         if ($currentinstance) {
